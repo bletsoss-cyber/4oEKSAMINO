@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Ultimate - List View</title>
+    <title>STUDY - List View</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -293,7 +293,7 @@
             <input type="password" id="password" class="login-input" placeholder="Κωδικός">
             <button class="login-btn" onclick="handleAuth()">Σύνδεση</button>
             <div class="toggle-text" onclick="toggleAuthMode()">
-                <span id="toggleText">Νέος εδώ; Δημιουργία λογαριασμού</span>
+                <span id="toggleText">Νέος εδώ; Δημιουργία προφιλ</span>
             </div>
         </div>
     </div>
@@ -303,7 +303,7 @@
             <div class="hero-card">
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Έξοδος</button>
                 <div style="margin-top:10px">
-                    <h1 id="greeting">Καλησπέρα!</h1>
+                    <h1 id="greeting">Καλημερα!</h1>
                     <p>Ώρα για διάβασμα.</p>
                 </div>
                 <div style="display:inline-flex; align-items:center; gap:10px; background:rgba(0,0,0,0.2); padding:8px 15px; border-radius:20px; margin-top:20px; font-weight:600">
@@ -386,8 +386,8 @@
     <div class="modal-overlay" id="breakModal">
         <div class="modal-content">
             <div style="font-size:3rem; color:var(--success); margin-bottom:15px"><i class="fas fa-trophy"></i></div>
-            <h2>Συνεδρία Τέλος!</h2>
-            <p style="margin-bottom:25px; opacity:0.8">Μπράβο! Κάνε ένα διάλειμμα.</p>
+            <h2>Συνεδρία Τέλος bro!</h2>
+            <p style="margin-bottom:25px; opacity:0.8">Μπράβο bro! Κάνε ένα διάλειμμα.</p>
             <button class="btn-action btn-start" onclick="closeModal()">Συνέχεια</button>
         </div>
     </div>
@@ -437,7 +437,7 @@
             document.querySelector('.fab-container').style.display = 'flex';
             
             const h = new Date().getHours();
-            document.getElementById('greeting').innerText = (h<12?"Καλημέρα":h>19?"Καληνύχτα":"Καλησπέρα") + `, ${user}!`;
+            document.getElementById('greeting').innerText = (h<12?"Καλημέρα":h>19?"Καλησπερα":"Καλημερα") + `, ${user}!`;
             
             loadUserData();
             loadTheme(); // Load saved theme
