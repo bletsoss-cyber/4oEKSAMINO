@@ -3,166 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Ultimate</title>
+    <title>Uni Hub - Focus Mode</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. SETUP & COLORS --- */
+        /* --- 1. MEMORY & FOCUS COLOR PALETTE --- */
         :root {
-            --bg-dark: #0f172a;
-            --card-dark: rgba(30, 41, 59, 0.7);
-            --text-dark: #e2e8f0;
-            --accent: #8b5cf6; /* Violet */
-            --accent-glow: rgba(139, 92, 246, 0.4);
-            --success: #10b981; 
+            /* ΚΥΡΙΟ ΘΕΜΑ: SAGE GREEN & DEEP TEAL (ΣΥΓΚΕΝΤΡΩΣΗ) */
+            --bg-dashboard: #f0fdf4; /* Πολύ απαλό πράσινο */
+            --bg-viewer: #fdfbf7;    /* Κρεμ (Ξεκούραστο για τα μάτια) */
+            --primary: #15803d;      /* Deep Green (Focus) */
+            --accent: #0f766e;       /* Teal (Calm) */
+            --text-main: #1e293b;    /* Slate Dark */
+            --text-muted: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border: 1px solid rgba(21, 128, 61, 0.2);
+            --success: #10b981;
             --error: #ef4444;
-            --border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* RESET & BASICS */
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-dark);
+            background-color: var(--bg-dashboard);
+            color: var(--text-main);
             font-family: 'Outfit', sans-serif;
             margin: 0; padding: 0;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15), transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.15), transparent 40%);
             overflow-x: hidden;
+            /* Διακριτικό background pattern */
+            background-image: radial-gradient(#15803d 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
         }
 
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .container { max-width: 1200px; margin: 0 auto; padding: 30px; display: none; }
-        
+
         /* --- LOGIN SCREEN --- */
         .login-wrapper {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center;
-            background: rgba(15, 23, 42, 0.95); z-index: 2000;
-            backdrop-filter: blur(10px);
+            background: #ecfdf5; z-index: 2000;
         }
         .login-box {
-            background: linear-gradient(145deg, #1e1b4b, #312e81);
-            padding: 40px; border-radius: 24px; width: 350px; text-align: center;
-            border: var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            background: white; padding: 40px; border-radius: 24px; width: 350px; text-align: center;
+            box-shadow: 0 20px 60px rgba(21, 128, 61, 0.15); border: var(--border);
         }
         .login-input {
-            width: 100%; padding: 12px; margin: 10px 0;
-            background: rgba(255,255,255,0.05); border: var(--border);
-            border-radius: 12px; color: white; outline: none; transition: 0.3s;
+            width: 100%; padding: 12px; margin: 10px 0; background: #f8fafc;
+            border: 1px solid #cbd5e1; border-radius: 12px; outline: none;
         }
-        .login-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+        .login-input:focus { border-color: var(--primary); background: white; }
         .login-btn {
-            width: 100%; padding: 12px; margin-top: 20px;
-            background: var(--accent); border: none; color: white;
-            font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s;
+            width: 100%; padding: 12px; margin-top: 20px; background: var(--primary);
+            color: white; font-weight: 700; border: none; border-radius: 12px; cursor: pointer;
         }
-        .login-btn:hover { box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-2px); }
-        .toggle-text { font-size: 0.85rem; margin-top: 15px; opacity: 0.7; cursor: pointer; }
-        .toggle-text:hover { color: var(--accent); text-decoration: underline; }
+        .login-btn:hover { background: var(--accent); transform: translateY(-2px); }
+        .toggle-text { font-size: 0.85rem; margin-top: 15px; cursor: pointer; color: var(--text-muted); }
+        .toggle-text:hover { color: var(--primary); text-decoration: underline; }
         .msg-box { font-size: 0.9rem; margin-bottom: 15px; min-height: 20px; }
-        .error-msg { color: var(--error); } .success-msg { color: var(--success); }
 
-        /* --- HERO & DASHBOARD --- */
-        .hero { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 50px; animation: fadeIn 0.8s; }
+        /* --- DASHBOARD HERO --- */
+        .hero { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px; animation: fadeIn 0.8s; }
         .hero-card {
-            background: linear-gradient(135deg, var(--accent), #6366f1);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             border-radius: 24px; padding: 40px; color: white; position: relative;
-            box-shadow: 0 20px 40px -10px var(--accent-glow);
+            box-shadow: 0 15px 30px rgba(15, 118, 110, 0.3);
         }
         .logout-btn {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(0,0,0,0.2); border: none; color: white;
-            padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.2s;
+            position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2);
+            border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer;
         }
-        .logout-btn:hover { background: #ef4444; }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
         .todo-widget {
-            background: var(--card-dark); border: var(--border);
-            border-radius: 24px; padding: 25px; backdrop-filter: blur(12px);
-            display: flex; flex-direction: column;
+            background: white; border-radius: 24px; padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column;
         }
         .todo-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .todo-input { flex: 1; background: rgba(255,255,255,0.05); border: var(--border); border-radius: 8px; color: white; padding: 8px; outline:none; }
-        .todo-btn { background: var(--accent); border: none; color: white; border-radius: 8px; width: 35px; cursor: pointer; }
+        .todo-input { flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; outline:none; }
+        .todo-btn { background: var(--primary); border: none; color: white; border-radius: 8px; width: 35px; cursor: pointer; }
         .todo-list { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; }
-        .todo-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .check-circle { width: 18px; height: 18px; border: 2px solid var(--accent); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .check-circle.checked { background: var(--accent); }
-        .todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
+        .check-circle { width: 18px; height: 18px; border: 2px solid var(--primary); border-radius: 50%; cursor: pointer; }
+        .check-circle.checked { background: var(--primary); }
+        .todo-item.completed span { text-decoration: line-through; color: #94a3b8; }
 
-        /* --- GRID CARDS & HOVER EFFECT --- */
+        /* --- GRID CARDS --- */
         .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: slideUp 0.8s ease; }
         .card {
-            background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
+            background: white; border: 1px solid #e2e8f0; width: 280px; padding: 30px 20px;
             border-radius: 20px; cursor: pointer; position: relative; overflow: hidden;
-            transition: 0.3s; text-align: center; backdrop-filter: blur(12px);
-            display: flex; flex-direction: column; align-items: center;
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        /* Line Effect */
         .card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: var(--primary); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease;
         }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--accent); }
         .card:hover::before { transform: scaleX(1); }
-        
         .icon-box {
-            width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 18px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin-bottom: 15px; transition: 0.3s;
+            width: 60px; height: 60px; background: #f0fdf4; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--primary); margin-bottom: 15px;
         }
-        .card:hover .icon-box { background: var(--accent); color: white; transform: rotate(10deg); }
 
-        /* --- BRAIN BUTTON (FAB) --- */
+        /* --- BRAIN BUTTON (Dashboard Only) --- */
         .fab {
             position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-            background: var(--accent); color: white; border-radius: 50%;
+            background: var(--primary); color: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
-            cursor: pointer; box-shadow: 0 10px 30px var(--accent-glow); z-index: 100;
-            transition: transform 0.2s; animation: bounceIn 1s;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(21, 128, 61, 0.4); z-index: 100;
+            animation: bounceIn 1s;
         }
-        .fab:hover { transform: scale(1.1) rotate(10deg); }
+        .fab:hover { transform: scale(1.1); }
 
-        /* --- ADVANCED TIMER PANEL --- */
-        .timer-panel {
-            position: fixed; bottom: 100px; right: 30px; width: 340px;
-            background: #1e1b4b; border: 1px solid var(--accent);
-            border-radius: 24px; padding: 25px; z-index: 99; display: none;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7); animation: slideUp 0.3s;
+        /* --- FULL SCREEN VIEWER (FOCUS MODE) --- */
+        .viewer-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-viewer); z-index: 1500;
+            display: none; flex-direction: column; animation: fadeIn 0.4s;
         }
-        .timer-panel.active { display: block; }
+        .viewer-overlay.active { display: flex; }
+
+        .focus-header {
+            padding: 10px 20px; background: white; border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .back-btn {
+            background: #f1f5f9; border: none; color: var(--text-muted);
+            padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .back-btn:hover { background: #e2e8f0; color: var(--text-main); }
         
+        iframe { flex: 1; width: 100%; border: none; background: var(--bg-viewer); }
+
+        /* --- SIDE PANEL (RIGHT DRAWER) --- */
+        .side-panel {
+            position: fixed; top: 0; right: -400px; width: 400px; height: 100%;
+            background: white; z-index: 2000; box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column;
+        }
+        .side-panel.open { right: 0; }
+
+        /* The Handle (Arrow) */
+        .panel-handle {
+            position: absolute; top: 50%; left: -40px; width: 40px; height: 80px;
+            background: white; border-radius: 12px 0 0 12px;
+            box-shadow: -4px 0 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--primary); font-size: 1.2rem;
+            transform: translateY(-50%); transition: 0.2s;
+            border-left: 3px solid var(--primary);
+        }
+        .panel-handle:hover { padding-right: 5px; }
+
+        /* Side Panel Content */
+        .panel-content { padding: 30px; overflow-y: auto; height: 100%; }
+        .panel-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+
+        /* Notepad */
+        .notepad {
+            width: 100%; height: 200px; padding: 15px; border-radius: 12px;
+            border: 1px solid #e2e8f0; background: #fffbeb; /* Yellow Note Paper */
+            font-family: 'Outfit', sans-serif; font-size: 0.95rem; line-height: 1.5;
+            resize: vertical; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+        }
+        .notepad:focus { border-color: var(--accent); }
+
+        /* Timer in Panel */
+        .timer-display { font-size: 3rem; font-weight: 800; text-align: center; color: var(--text-main); margin: 20px 0; font-variant-numeric: tabular-nums; }
         .modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        
         .btn-mode {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-dark); padding: 10px; border-radius: 12px;
-            cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+            background: #f1f5f9; border: 1px solid #e2e8f0; padding: 10px;
+            border-radius: 8px; cursor: pointer; font-size: 0.85rem; color: var(--text-muted);
             display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
-        .btn-mode:hover { background: rgba(255,255,255,0.1); }
-        .btn-mode.active { background: var(--accent); border-color: var(--accent); color: white; }
-        
-        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; letter-spacing: -2px; margin: 5px 0; }
-        .mode-desc { text-align: center; font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; min-height: 1.2em; }
-        .custom-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px; border-radius: 8px; text-align: center; margin-top: 10px; display: none; }
+        .btn-mode.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-action { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn-start { background: var(--primary); color: white; }
+        .btn-stop { background: var(--error); color: white; display: none; }
 
-        .btn-action { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; }
-        .btn-start { background: linear-gradient(90deg, var(--accent), #6366f1); color: white; }
-        .btn-stop { background: #ef4444; color: white; display: none; }
-
-        /* VIEWER & MODAL */
-        .viewer-container { background: var(--card-dark); border: var(--border); border-radius: 20px; height: 80vh; display: flex; flex-direction: column; animation: slideUp 0.5s; }
-        .mac-header { padding: 12px 20px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
-        .dots { display: flex; gap: 8px; } .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .red { background: #ff5f57; } .yellow { background: #febc2e; } .green { background: #28c840; }
-        iframe { flex: 1; width: 100%; border: none; background: white; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 200; display: none; justify-content: center; align-items: center; }
-        .modal-content { background: linear-gradient(145deg, #2e1065, #1e1b4b); padding: 40px; border-radius: 30px; text-align: center; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: zoomIn 0.3s; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes bounceIn { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
     </style>
@@ -171,158 +200,209 @@
 
     <div id="loginScreen" class="login-wrapper">
         <div class="login-box">
-            <div style="font-size:3rem; color:var(--accent); margin-bottom:10px"><i class="fas fa-brain"></i></div>
-            <h2 id="formTitle">Καλωσόρισες</h2>
+            <div style="font-size:3rem; color:var(--primary); margin-bottom:10px"><i class="fas fa-seedling"></i></div>
+            <h2 id="formTitle">Uni Hub</h2>
             <div id="loginMsg" class="msg-box"></div>
             <input type="text" id="username" class="login-input" placeholder="Όνομα Χρήστη">
             <input type="password" id="password" class="login-input" placeholder="Κωδικός">
             <button class="login-btn" onclick="handleAuth()">Σύνδεση</button>
-            <div class="toggle-text" onclick="toggleAuthMode()">
-                <span id="toggleText">Νέος εδώ; Δημιούργησε λογαριασμό</span>
-            </div>
+            <div class="toggle-text" onclick="toggleAuthMode()"><span id="toggleText">Δημιουργία Λογαριασμού</span></div>
         </div>
     </div>
 
     <div id="mainContainer" class="container">
-        <div id="hero-section" class="hero">
+        <div class="hero">
             <div class="hero-card">
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Έξοδος</button>
-                <div style="margin-top:10px">
-                    <h1 id="greeting">Καλησπέρα!</h1>
-                    <p>Ώρα για διάβασμα.</p>
-                </div>
-                <div style="display:inline-flex; align-items:center; gap:10px; background:rgba(0,0,0,0.2); padding:8px 15px; border-radius:20px; margin-top:20px; font-weight:600">
-                    <i class="fas fa-fire" style="color:#fcd34d"></i>
-                    <span id="sessionCount">0</span> Sessions
+                <h1 id="greeting">Καλησπέρα!</h1>
+                <p>Focus Mode: Ενεργοποιημένο.</p>
+                <div style="margin-top:20px; font-weight:600; display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:20px">
+                    <i class="fas fa-check-circle"></i> <span id="sessionCount">0</span> Ολοκληρωμένες Συνεδρίες
                 </div>
             </div>
             <div class="todo-widget">
-                <div style="font-weight:700; margin-bottom:15px; display:flex; justify-content:space-between">
-                    <span>Στόχοι</span> <i class="fas fa-tasks" style="opacity:0.5"></i>
-                </div>
+                <div style="font-weight:700; margin-bottom:10px; color:var(--primary)">Σημερινή Λίστα</div>
                 <div class="todo-input-group">
-                    <input type="text" id="todoInput" class="todo-input" placeholder="Πρόσθεσε στόχο...">
+                    <input type="text" id="todoInput" class="todo-input" placeholder="Γράψε στόχο...">
                     <button class="todo-btn" onclick="addTodo()"><i class="fas fa-plus"></i></button>
                 </div>
                 <ul class="todo-list" id="todoList"></ul>
             </div>
         </div>
-        <main id="app"></main>
+        <main id="app" class="grid"></main>
     </div>
 
-    <div class="fab" onclick="toggleTimerPanel()">
+    <div class="fab" id="dashTimerBtn" onclick="toggleSidePanel()">
         <i class="fas fa-brain"></i>
     </div>
 
-    <div class="timer-panel" id="timerPanel">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px">
-            <h3>Επιλογή Μεθόδου</h3>
-            <i class="fas fa-times" style="cursor:pointer; opacity:0.6" onclick="toggleTimerPanel()"></i>
-        </div>
-        
-        <div class="modes-grid">
-            <button class="btn-mode active" onclick="setMode(25, 'Pomodoro', 'Κλασικό 25άρι για γρήγορη αρχή.', this)">
-                <i class="fas fa-stopwatch"></i> Pomodoro
+    <div class="viewer-overlay" id="viewerOverlay">
+        <div class="focus-header">
+            <button class="back-btn" onclick="closeViewer()">
+                <i class="fas fa-arrow-left"></i> Πίσω
             </button>
-            <button class="btn-mode" onclick="setMode(50, 'Deep Work', 'Βαθιά συγκέντρωση για δύσκολα μαθήματα.', this)">
-                <i class="fas fa-brain"></i> Deep Work
-            </button>
-            <button class="btn-mode" onclick="setMode(90, 'Flow State', 'Ultradian Rhythm: Όταν έχεις πάρει φόρα.', this)">
-                <i class="fas fa-fire"></i> Flow
-            </button>
-            <button class="btn-mode" onclick="setMode(5, 'Quick Start', 'Ο κανόνας των 5 λεπτών.', this)">
-                <i class="fas fa-bolt"></i> Quick
-            </button>
-        </div>
-
-        <button class="btn-mode" style="width:100%; flex-direction:row; justify-content:center; gap:10px" onclick="toggleCustomInput(this)">
-            <i class="fas fa-cog"></i> Custom
-        </button>
-        <input type="number" id="customMin" class="custom-input" placeholder="Λεπτά (π.χ. 40)" onchange="setCustomMode(this.value)">
-
-        <div class="timer-display" id="timeDisplay">25:00</div>
-        <div class="mode-desc" id="modeDesc">Κλασικό 25άρι για γρήγορη αρχή.</div>
-        
-        <button class="btn-action btn-start" id="startBtn" onclick="startTimer()">Έναρξη</button>
-        <button class="btn-action btn-stop" id="stopBtn" onclick="resetTimer()">Διακοπή</button>
+            <div style="font-weight:600; color:var(--primary)" id="viewerTitle">Μάθημα</div>
+            <div style="width:80px"></div> </div>
+        <iframe id="contentFrame" src=""></iframe>
     </div>
 
-    <div class="modal-overlay" id="breakModal">
-        <div class="modal-content">
-            <div style="font-size:3rem; color:var(--success); margin-bottom:15px"><i class="fas fa-trophy"></i></div>
-            <h2>Συνεδρία Τέλος!</h2>
-            <p style="margin-bottom:25px; opacity:0.8">Μπράβο! Κάνε ένα διάλειμμα.</p>
-            <button class="btn-action btn-start" onclick="closeModal()">Συνέχεια</button>
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-handle" onclick="toggleSidePanel()">
+            <i class="fas fa-chevron-left" id="handleIcon"></i>
+        </div>
+
+        <div class="panel-content">
+            <div class="panel-title"><i class="fas fa-stopwatch"></i> Χρονόμετρο</div>
+            <div class="modes-grid">
+                <button class="btn-mode active" onclick="setMode(25, 'Pomodoro', this)">🍅 25'</button>
+                <button class="btn-mode" onclick="setMode(50, 'Deep', this)">🧠 50'</button>
+                <button class="btn-mode" onclick="setMode(90, 'Flow', this)">🌊 90'</button>
+                <button class="btn-mode" onclick="setMode(5, 'Quick', this)">⚡ 5'</button>
+            </div>
+            <div class="timer-display" id="timeDisplay">25:00</div>
+            <button class="btn-action btn-start" id="startBtn" onclick="startTimer()">Έναρξη</button>
+            <button class="btn-action btn-stop" id="stopBtn" onclick="resetTimer()">Διακοπή</button>
+            
+            <hr style="border:0; border-top:1px solid #f1f5f9; margin:30px 0">
+
+            <div class="panel-title"><i class="fas fa-pen"></i> Σημειώσεις</div>
+            <textarea class="notepad" id="scratchpad" placeholder="Γράψε γρήγορες σκέψεις εδώ... (Αποθηκεύονται αυτόματα)" oninput="saveScratchpad()"></textarea>
         </div>
     </div>
 
     <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
 
     <script>
-        // --- AUTH & DATA ---
+        // --- DATA ---
+       const subjects = [
+            { 
+                id: 1, 
+                title: "Ανατομία III", 
+                icon: "fa-skull",
+                files: [
+                    { name: "Κεφ 1: Εισαγωγή", file: "test.html" },
+                    { name: "Κεφ 2: Νευρικό", file: "test.html" }
+                ]
+            },
+            { 
+                id: 2, 
+                title: "Εμβρυολογία", 
+                icon: "fa-baby-carriage",
+                files: [
+                    { name: "Κεφ 1: Γονιμοποίηση", file: "test.html" }
+                ]
+            },
+            { 
+                id: 3, 
+                title: "Ιατρική Γενετική", 
+                icon: "fa-dna", 
+                files: [ 
+                    { name: "Κεφ 1: Εισαγωγή", file: "test.html" }, 
+                    { name: "Κεφ 2: Κληρονομικότητα", file: "test.html" } 
+                ] 
+            }, 
+            { 
+                id: 4, 
+                title: "Οδοντική Χειρουργική", 
+                icon: "fa-tooth", 
+                files: [ 
+                    { name: "Κεφ 1: Εισαγωγή", file: "test.html" } 
+                ] 
+            }, 
+            { 
+                id: 5, 
+                title: "Προκλινική", 
+                icon: "fa-notes-medical", 
+                files: [ 
+                    { name: "Κεφ 1: Εργαλεία", file: "test.html" }, 
+                    { name: "Κεφ 2: Τεχνικές", file: "test.html" } 
+                ] 
+            }, 
+            { 
+                id: 6, 
+                title: "Ακτινολογία", 
+                icon: "fa-x-ray", 
+                files: [ 
+                    { name: "Κεφ 1: Ακτίνες Χ", file: "test.html" } 
+                ] 
+            }, 
+            { 
+                id: 7, 
+                title: "Προληπτική Οδοντιατρική", 
+                icon: "fa-shield-virus", 
+                files: [ 
+                    { name: "Κεφ 1: Φθορίωση", file: "test.html" }, 
+                    { name: "Κεφ 2: Στοματική Υγιεινή", file: "test.html" } 
+                ] 
+            } 
+        ];
+        // --- AUTH & STATE ---
         let currentUser = null;
         let isLoginMode = true;
 
         function getUsers() { return JSON.parse(localStorage.getItem('uni_users') || '{}'); }
-        
+
         function handleAuth() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
-            const msg = document.getElementById('loginMsg');
             const db = getUsers();
+            const msg = document.getElementById('loginMsg');
 
-            if(!u || !p) { msg.innerText = "Συμπλήρωσε τα πεδία"; msg.className="msg-box error-msg"; return; }
+            if(!u || !p) { msg.innerText="Συμπλήρωσε τα πεδία"; msg.style.color="red"; return; }
 
             if(isLoginMode) {
                 if(db[u] === p) loginSuccess(u);
-                else { msg.innerText = "Λάθος στοιχεία"; msg.className="msg-box error-msg"; }
+                else { msg.innerText="Λάθος στοιχεία"; msg.style.color="red"; }
             } else {
-                if(db[u]) { msg.innerText = "Το όνομα υπάρχει"; msg.className="msg-box error-msg"; }
+                if(db[u]) { msg.innerText="Το όνομα υπάρχει"; msg.style.color="red"; }
                 else {
                     db[u] = p; localStorage.setItem('uni_users', JSON.stringify(db));
-                    msg.innerText = "Επιτυχία! Συνδέσου."; msg.className="msg-box success-msg";
-                    setTimeout(toggleAuthMode, 1500);
+                    msg.innerText="Επιτυχία! Συνδέσου."; msg.style.color="green";
+                    setTimeout(toggleAuthMode, 1000);
                 }
             }
         }
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
-            document.getElementById('formTitle').innerText = isLoginMode ? 'Σύνδεση' : 'Εγγραφή';
+            document.getElementById('formTitle').innerText = isLoginMode ? 'Uni Hub' : 'Εγγραφή';
             document.querySelector('.login-btn').innerText = isLoginMode ? 'Σύνδεση' : 'Δημιουργία';
-            document.getElementById('toggleText').innerText = isLoginMode ? 'Νέος; Εγγραφή' : 'Έχεις λογαριασμό; Login';
+            document.getElementById('toggleText').innerText = isLoginMode ? 'Δημιουργία Λογαριασμού' : 'Έχεις λογαριασμό; Login';
             document.getElementById('loginMsg').innerText = '';
         }
 
         function loginSuccess(user) {
             currentUser = user;
             document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainContainer').style.display = 'block';
-            document.querySelector('.fab').style.display = 'flex';
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('dashTimerBtn').style.display = 'flex';
             
             const h = new Date().getHours();
             document.getElementById('greeting').innerText = (h<12?"Καλημέρα":h>19?"Καληνύχτα":"Καλησπέρα") + `, ${user}!`;
+            
             loadUserData();
-            renderHome();
+            renderGrid();
         }
 
         function logout() {
             currentUser = null;
             document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainContainer').style.display = 'none';
-            document.querySelector('.fab').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('dashTimerBtn').style.display = 'none';
+            closeViewer(); // Ensure viewer is closed
         }
 
         // --- USER DATA ---
         function loadUserData() {
+            // Todos
             const todos = JSON.parse(localStorage.getItem(`${currentUser}_todos`) || '[]');
             const list = document.getElementById('todoList');
             list.innerHTML = '';
             todos.forEach(t => createTodoEl(t.text, t.completed));
-            const streak = localStorage.getItem(`${currentUser}_streak`) || 0;
-            document.getElementById('sessionCount').innerText = streak;
+            // Streak
+            document.getElementById('sessionCount').innerText = localStorage.getItem(`${currentUser}_streak`) || 0;
+            // Scratchpad
+            document.getElementById('scratchpad').value = localStorage.getItem(`${currentUser}_notes`) || '';
         }
 
         function saveTodos() {
@@ -336,141 +416,107 @@
         function addTodo() {
             const val = document.getElementById('todoInput').value.trim();
             if(!val) return;
-            createTodoEl(val, false);
-            saveTodos();
+            createTodoEl(val, false); saveTodos();
             document.getElementById('todoInput').value = '';
         }
 
         function createTodoEl(text, completed) {
             const li = document.createElement('li');
             li.className = `todo-item ${completed?'completed':''}`;
-            li.innerHTML = `<div class="check-circle ${completed?'checked':''}" onclick="toggleTask(this)"></div><span>${text}</span><i class="fas fa-trash" style="margin-left:auto; cursor:pointer; opacity:0.5" onclick="this.parentElement.remove(); saveTodos()"></i>`;
+            li.innerHTML = `<div class="check-circle ${completed?'checked':''}" onclick="toggleTask(this)"></div><span>${text}</span><i class="fas fa-times" style="margin-left:auto; cursor:pointer; opacity:0.4" onclick="this.parentElement.remove(); saveTodos()"></i>`;
             document.getElementById('todoList').appendChild(li);
         }
 
         function toggleTask(el) {
-            el.classList.toggle('checked');
-            el.parentElement.classList.toggle('completed');
-            saveTodos();
+            el.classList.toggle('checked'); el.parentElement.classList.toggle('completed'); saveTodos();
         }
 
-        // --- SUBJECTS (Configured for "notes" folder) ---
-        const subjects = [
-            { 
-                id: 1, title: "Ανατομία III", icon: "fa-skull", 
-                files: [
-                    {name: "Κεφ 1: Εισαγωγή", file: "test.html"},
-                    {name: "Κεφ 2: Νευρικό", file: "test.html"}
-                ] 
-            },
-            { 
-                id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", 
-                files: [
-                    {name: "Κεφ 1: Γονιμοποίηση", file:  "test.html" }
-                ] 
-            },
-             { 
-                id: 1, title: "Ιατρική Γενετική", icon: "fa-dna", 
-                files: [
-                    {name: "Κεφ 1: Εισαγωγή", file: "test.html"},
-                    {name: "Κεφ 2: Νευρικό", file: "test.html"}
-                ] 
-            },
-            { 
-                id: 2, title: "Οδοντική Χειρουργική", icon: "fa-tooth", 
-                files: [
-                    {name: "Κεφ 1: Γονιμοποίηση", file:  "test.html" }
-                ] 
-            },
-             { 
-                id: 1, title: "Προκλινική", icon: "fa-notes-medical", 
-                files: [
-                    {name: "Κεφ 1: Εισαγωγή", file: "test.html"},
-                    {name: "Κεφ 2: Νευρικό", file: "test.html"}
-                ] 
-            },
-            { 
-                id: 2, title: "Ακτινολογία", icon: "fa-x-ray", 
-                files: [
-                    {name: "Κεφ 1: Γονιμοποίηση", file:  "test.html" }
-                ] 
-            },
-             { 
-                id: 1, title: "Προληπτική Οδοντιατρική", icon: "fa-shield-virus", 
-                files: [
-                    {name: "Κεφ 1: Εισαγωγή", file: "test.html"},
-                    {name: "Κεφ 2: Νευρικό", file: "test.html"}
-                ] 
-            }
-        ];
+        function saveScratchpad() {
+            localStorage.setItem(`${currentUser}_notes`, document.getElementById('scratchpad').value);
+        }
 
+        // --- GRID & NAVIGATION ---
         const app = document.getElementById('app');
-        const hero = document.getElementById('hero-section');
 
-        function renderHome() {
-            hero.style.display = 'grid';
-            let html = '<div class="grid">';
+        function renderGrid() {
+            let html = '';
             subjects.forEach(sub => {
                 html += `
                 <div class="card" onclick="openSubject(${sub.id})">
                     <div class="icon-box"><i class="fas ${sub.icon}"></i></div>
                     <h3>${sub.title}</h3>
-                    <span style="opacity:0.6; font-size:0.85rem">${sub.files.length} Αρχεία</span>
+                    <span style="opacity:0.6; font-size:0.85rem; margin-top:5px">${sub.files.length} Αρχεία</span>
                 </div>`;
             });
-            html += '</div>';
             app.innerHTML = html;
         }
 
         function openSubject(id) {
             const sub = subjects.find(s => s.id === id);
-            hero.style.display = 'none';
+            // Simple overlay for file selection within grid area
             let html = `
-            <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px; animation:slideUp 0.3s">
-                <button onclick="renderHome()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;"><i class="fas fa-arrow-left"></i></button>
-                <h2 style="margin:0">${sub.title}</h2>
-            </div>
-            <div class="grid">`;
-            if(sub.files.length === 0) html += '<p style="opacity:0.6">Δεν υπάρχουν αρχεία.</p>';
+            <div style="width:100%">
+                <button onclick="renderGrid()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-size:1.1rem; margin-bottom:20px; font-weight:600">
+                    <i class="fas fa-arrow-left"></i> Πίσω
+                </button>
+                <h2 style="color:var(--primary); margin-bottom:20px">${sub.title}</h2>
+                <div class="grid" style="justify-content:flex-start">`;
+            
+            if(sub.files.length === 0) html += '<p>Κενό.</p>';
             else sub.files.forEach(f => {
-                html += `<div class="card" onclick="openViewer('${f.file}', '${f.name}')"><div class="icon-box"><i class="fas fa-file-alt"></i></div><h3>${f.name}</h3></div>`;
+                html += `<div class="card" onclick="openViewer('${f.file}', '${f.name}')">
+                    <div class="icon-box"><i class="fas fa-file-alt"></i></div>
+                    <h3>${f.name}</h3>
+                </div>`;
             });
-            html += '</div>';
+            html += '</div></div>';
             app.innerHTML = html;
         }
 
+        // --- VIEWER & FOCUS LOGIC ---
         function openViewer(file, name) {
-            app.innerHTML = `<div class="viewer-container"><div class="mac-header"><div class="dots"><div class="dot red" onclick="renderHome()"></div><div class="dot yellow"></div><div class="dot green"></div></div><div style="opacity:0.7">${name}</div><div></div></div><iframe src="${file}"></iframe></div>`;
-        }
-
-        // --- ADVANCED TIMER LOGIC ---
-        let timer;
-        let timeLeft = 25 * 60;
-        let isRunning = false;
-
-        function toggleTimerPanel() { document.getElementById('timerPanel').classList.toggle('active'); }
-        
-        function setMode(minutes, name, desc, btn) {
-            if(isRunning) return;
-            timeLeft = minutes * 60;
-            updateDisplay();
-            document.getElementById('modeDesc').innerText = desc;
+            document.getElementById('contentFrame').src = file;
+            document.getElementById('viewerTitle').innerText = name;
             
-            // UI Toggle
-            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            document.getElementById('customMin').style.display = 'none';
+            // Show Overlay
+            document.getElementById('viewerOverlay').classList.add('active');
+            
+            // HIDE Dashboard Brain Button
+            document.getElementById('dashTimerBtn').style.display = 'none';
+            
+            // Ensure Side Panel is closed initially but handle is visible
+            document.getElementById('sidePanel').classList.remove('open');
         }
 
-        function toggleCustomInput(btn) {
+        function closeViewer() {
+            document.getElementById('viewerOverlay').classList.remove('active');
+            document.getElementById('contentFrame').src = "";
+            
+            // SHOW Dashboard Brain Button again
+            document.getElementById('dashTimerBtn').style.display = 'flex';
+            
+            // Close side panel
+            document.getElementById('sidePanel').classList.remove('open');
+        }
+
+        // --- SIDE PANEL LOGIC ---
+        function toggleSidePanel() {
+            const panel = document.getElementById('sidePanel');
+            panel.classList.toggle('open');
+            
+            const icon = document.getElementById('handleIcon');
+            if(panel.classList.contains('open')) icon.className = "fas fa-chevron-right";
+            else icon.className = "fas fa-chevron-left";
+        }
+
+        // --- TIMER LOGIC ---
+        let timer; let timeLeft = 25 * 60; let isRunning = false;
+
+        function setMode(min, name, btn) {
+            if(isRunning) return;
+            timeLeft = min * 60; updateDisplay();
             document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById('customMin').style.display = 'block';
-            document.getElementById('modeDesc').innerText = "Πληκτρολόγησε τον χρόνο σου.";
-        }
-
-        function setCustomMode(val) {
-            if(val && val > 0) { timeLeft = val * 60; updateDisplay(); }
         }
 
         function updateDisplay() {
@@ -480,8 +526,7 @@
         }
 
         function startTimer() {
-            if(isRunning) return;
-            isRunning = true;
+            if(isRunning) return; isRunning = true;
             document.getElementById('startBtn').style.display='none';
             document.getElementById('stopBtn').style.display='inline-block';
             timer = setInterval(() => {
@@ -498,17 +543,15 @@
 
         function timeUp() {
             resetTimer();
-            document.getElementById('breakModal').style.display = 'flex';
             document.getElementById('alarmSound').play();
+            alert("Ο Χρόνος Τέλειωσε! Κάνε διάλειμμα.");
             
             let streak = parseInt(localStorage.getItem(`${currentUser}_streak`) || 0) + 1;
             localStorage.setItem(`${currentUser}_streak`, streak);
             document.getElementById('sessionCount').innerText = streak;
-
+            
             timeLeft = 25 * 60; updateDisplay();
         }
-
-        function closeModal() { document.getElementById('breakModal').style.display = 'none'; }
     </script>
 </body>
 </html>
