@@ -3,146 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub - Mac OS Edition</title>
+    <title>Uni Hub - Purple Edition</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. APPLE STYLE VARIABLES --- */
+        /* --- 1. THEMES & VARIABLES --- */
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            --blur-amt: 30px;
-            --primary: #3b82f6; /* Apple Blue */
-            --text: #f1f5f9;
-            --bg-base: #0f172a;
+            /* DEFAULT PURPLE THEME */
+            --bg-base: #0f0c29;
+            --wallpaper: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #8b5cf6;
+            --accent-glow: 0 0 20px rgba(139, 92, 246, 0.6);
+            --text: #ffffff;
+            --blur: 20px;
         }
 
-        /* THEMES */
-        [data-theme="default"] { /* Mac Dark */
+        [data-theme="ocean"] {
             --bg-base: #000000;
-            --wallpaper: radial-gradient(circle at 0% 0%, #2e1065 0%, #0f172a 100%);
-            --primary: #8b5cf6;
+            --wallpaper: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            --accent: #00d2ff;
+            --accent-glow: 0 0 20px rgba(0, 210, 255, 0.6);
         }
-        [data-theme="ocean"] { /* Sierra Blue */
-            --bg-base: #0f172a;
-            --wallpaper: linear-gradient(120deg, #1e3a8a, #172554);
-            --primary: #60a5fa;
+
+        [data-theme="forest"] {
+            --bg-base: #052e16;
+            --wallpaper: radial-gradient(circle, #134e5e, #71b280);
+            --accent: #2ecc71;
+            --accent-glow: 0 0 20px rgba(46, 204, 113, 0.6);
         }
-        [data-theme="forest"] { /* Midnight Green */
-            --bg-base: #022c22;
-            --wallpaper: radial-gradient(circle at center, #14532d, #020617);
-            --primary: #4ade80;
-        }
-        [data-theme="sunset"] { /* Ventura Orange */
+
+        [data-theme="sunset"] {
             --bg-base: #2a0a18;
-            --wallpaper: linear-gradient(45deg, #be123c, #881337);
-            --primary: #fb7185;
+            --wallpaper: linear-gradient(45deg, #ff512f, #dd2476);
+            --accent: #fbbf24;
+            --accent-glow: 0 0 20px rgba(251, 191, 36, 0.6);
         }
 
-        /* --- GLOBAL RESET --- */
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); margin: 0; padding: 0; }
+        /* RESET */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        
         body {
-            background: var(--bg-base);
-            background-image: var(--wallpaper);
-            background-size: cover;
-            background-attachment: fixed;
+            background: var(--wallpaper);
+            background-size: 200% 200%;
+            animation: bgAnim 15s ease infinite;
             color: var(--text);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100vh; overflow-x: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
+        @keyframes bgAnim { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
 
-        /* --- GLASSMORPHISM UTILITY --- */
+        /* GLASS CARD */
         .glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(var(--blur-amt));
-            -webkit-backdrop-filter: blur(var(--blur-amt));
+            background: var(--glass);
+            backdrop-filter: blur(var(--blur));
+            -webkit-backdrop-filter: blur(var(--blur));
             border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
             border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px; display: none; }
 
         /* --- LOGIN --- */
-        .login-wrapper { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 2000; background: rgba(0,0,0,0.5); backdrop-filter: blur(20px); }
-        .login-box { padding: 40px; width: 360px; text-align: center; }
-        .login-input {
-            width: 100%; padding: 14px; margin: 10px 0; background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; font-size: 0.95rem;
-        }
-        .login-input:focus { border-color: var(--primary); background: rgba(0,0,0,0.4); }
-        .btn-apple {
-            width: 100%; padding: 14px; margin-top: 15px;
-            background: var(--primary); border: none; color: white;
-            font-weight: 600; font-size: 1rem; border-radius: 12px; cursor: pointer;
-        }
-        .btn-apple:hover { filter: brightness(1.1); transform: scale(1.02); }
+        .login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+        .login-box { padding: 40px; width: 380px; text-align: center; }
+        .inp { width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; outline: none; }
+        .btn { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn:hover { box-shadow: var(--accent-glow); transform: scale(1.02); }
 
-        /* --- DASHBOARD HERO --- */
-        .hero { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; }
-        .hero-card { padding: 40px; position: relative; display: flex; flex-direction: column; justify-content: center; }
-        .logout-btn {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
+        /* --- LAYOUT --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; display: none; }
+        
+        .hero { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; }
+        .hero p { opacity: 0.7; font-size: 1.1rem; }
+        
+        /* HOME TOOLS (Buttons) */
+        .home-tools { display: flex; gap: 15px; }
+        .tool-btn {
+            width: 50px; height: 50px; border-radius: 15px; background: var(--glass); border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; color: white;
         }
-        .logout-btn:hover { background: #ef4444; border-color: #ef4444; }
+        .tool-btn:hover { background: var(--accent); box-shadow: var(--accent-glow); }
 
-        .stat-pill {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 50px;
-            font-size: 0.9rem; margin-top: 15px; width: fit-content;
-        }
-
-        /* --- TO-DO WIDGET --- */
-        .todo-widget { padding: 25px; display: flex; flex-direction: column; }
-        .todo-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .todo-list { list-style: none; overflow-y: auto; max-height: 200px; }
-        .todo-item {
-            display: flex; align-items: center; gap: 10px; padding: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem;
-        }
-        .check-circle {
-            width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
-            cursor: pointer; position: relative;
-        }
-        .check-circle:hover { border-color: var(--primary); }
-
-        /* --- SUBJECTS GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; padding-bottom: 80px; }
+        /* --- GRID (SUBJECTS) --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        
         .card {
             padding: 30px; text-align: center; cursor: pointer; position: relative; overflow: hidden;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 220px;
         }
-        .card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.12); border-color: var(--primary); }
-        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--primary); filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); }
+        
+        /* BORDER FILL ANIMATION (The "Drawing Line") */
+        .card span { position: absolute; display: block; background: var(--accent); transition: 0.5s; }
+        .card span:nth-child(1) { top: 0; left: 0; width: 0; height: 2px; }
+        .card:hover span:nth-child(1) { width: 100%; }
+        .card span:nth-child(2) { top: 0; right: 0; width: 2px; height: 0; transition-delay: 0.1s; }
+        .card:hover span:nth-child(2) { height: 100%; }
+        .card span:nth-child(3) { bottom: 0; right: 0; width: 0; height: 2px; transition-delay: 0.2s; }
+        .card:hover span:nth-child(3) { width: 100%; }
+        .card span:nth-child(4) { bottom: 0; left: 0; width: 2px; height: 0; transition-delay: 0.3s; }
+        .card:hover span:nth-child(4) { height: 100%; }
+        
+        .card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.08); }
+        .icon-box { font-size: 3rem; margin-bottom: 15px; color: var(--accent); filter: drop-shadow(0 0 10px var(--accent)); }
 
-        /* --- FABs (Floating Action Buttons) --- */
-        .fab-container { position: fixed; bottom: 40px; right: 40px; display: flex; flex-direction: column; gap: 15px; z-index: 100; }
-        .fab {
-            width: 60px; height: 60px; border-radius: 20px; /* Mac style squircle */
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; cursor: pointer;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            color: white; transition: 0.3s;
+        /* --- CHAPTER MENU (LIST VIEW) --- */
+        .chapter-container { display: none; animation: fadeIn 0.5s ease; max-width: 800px; margin: 0 auto; }
+        .chapter-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .chapter-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 12px; cursor: pointer; position: relative; overflow: hidden;
         }
-        .fab:hover { transform: scale(1.1); background: var(--primary); border-color: var(--primary); }
+        .chapter-item:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); padding-left: 35px; }
+        .chapter-item::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent); opacity: 0; transition: 0.3s;
+        }
+        .chapter-item:hover::before { opacity: 1; }
 
         /* --- FULL SCREEN VIEWER --- */
         .viewer-overlay {
-            position: fixed; inset: 0; background: black; z-index: 3000;
+            position: fixed; inset: 0; background: #000; z-index: 3000;
             display: none; opacity: 0;
         }
         .viewer-overlay.active { display: block; opacity: 1; }
-        
-        iframe { width: 100vw; height: 100vh; border: none; background: white; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
 
-        /* Back Button (Floating) */
+        /* Floating Back Button */
         .floating-back {
             position: fixed; top: 20px; left: 20px; z-index: 3005;
             background: rgba(0,0,0,0.6); color: white; padding: 10px 20px;
@@ -150,150 +143,133 @@
             border: 1px solid rgba(255,255,255,0.1); font-weight: 500;
             display: flex; align-items: center; gap: 8px;
         }
-        .floating-back:hover { background: var(--primary); }
+        .floating-back:hover { background: var(--accent); }
 
         /* --- SLIDE-OUT SIDEBAR --- */
         .sidebar {
-            position: fixed; top: 0; right: -360px; width: 360px; height: 100%;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(40px); /* Heavy Blur */
-            border-left: 1px solid rgba(255,255,255,0.1);
-            z-index: 3002; padding: 30px;
-            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Smooth Apple-like easing */
-            display: flex; flex-direction: column; gap: 25px;
+            position: fixed; top: 0; right: -350px; width: 350px; height: 100%;
+            background: rgba(15, 12, 41, 0.9); backdrop-filter: blur(30px);
+            border-left: 1px solid rgba(255,255,255,0.1); z-index: 3002; padding: 30px;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column; gap: 20px;
         }
         .sidebar.open { right: 0; }
-
-        /* The Toggle Handle */
         .sidebar-handle {
             position: absolute; top: 50%; left: -40px; width: 40px; height: 80px;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px);
-            border-radius: 12px 0 0 12px; border: 1px solid rgba(255,255,255,0.1); border-right: none;
+            background: var(--accent); border-radius: 12px 0 0 12px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; color: white; transform: translateY(-50%);
         }
-        .sidebar-handle:hover { color: var(--primary); }
 
-        /* Sidebar Contents */
-        .sidebar-section {
-            background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .sidebar h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; margin-bottom: 15px; }
-
-        /* Timer */
-        .timer-display { font-size: 3.5rem; font-weight: 700; text-align: center; margin-bottom: 15px; font-variant-numeric: tabular-nums; }
+        .timer-display { font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 15px; }
         .timer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn-sm { 
-            background: rgba(255,255,255,0.1); border:none; color:white; padding:8px; 
-            border-radius:8px; cursor:pointer; font-size:0.85rem; 
-        }
-        .btn-sm:hover { background: rgba(255,255,255,0.2); }
-        .btn-sm.active { background: var(--primary); }
-
-        /* Notepad */
-        .notepad {
-            width: 100%; height: 200px; background: transparent; border: none;
-            color: #e2e8f0; resize: none; outline: none; font-family: 'Inter', sans-serif;
-            font-size: 0.95rem; line-height: 1.6;
-        }
+        .btn-sm { background: rgba(255,255,255,0.1); border:none; color:white; padding:10px; border-radius:8px; cursor:pointer; }
+        .btn-sm:hover { background: var(--accent); }
+        .notepad { width: 100%; height: 150px; background: rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white; padding:10px; border-radius:8px; resize:none; outline:none; }
         
-        /* Theme Dots */
-        .theme-row { display: flex; gap: 12px; justify-content: center; }
-        .theme-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); }
-        .theme-dot:hover { transform: scale(1.2); border-color: white; }
+        .theme-dots { display: flex; gap: 10px; justify-content: center; }
+        .dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); }
+        .dot:hover { transform: scale(1.2); border-color: white; }
 
-        /* Fade Animation */
+        /* --- MODAL (For Home Timer) --- */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2500; display: none; justify-content: center; align-items: center; }
+        .modal-box { width: 300px; padding: 30px; text-align: center; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.6s ease forwards; }
-
     </style>
 </head>
 <body>
 
-    <div id="loginScreen" class="login-wrapper">
+    <div id="loginScreen" class="login-overlay">
         <div class="glass login-box">
-            <div style="font-size:3rem; margin-bottom:15px; color:var(--primary);"><i class="fas fa-fingerprint"></i></div>
-            <h2 style="margin-bottom:10px;">Uni Hub ID</h2>
-            <p style="opacity:0.6; margin-bottom:25px; font-size:0.9rem;">Sign in to access your workspace</p>
-            
-            <div id="loginMsg" style="color:#f87171; font-size:0.85rem; margin-bottom:10px; min-height:20px;"></div>
-            
-            <input type="email" id="email" class="login-input" placeholder="Email">
-            <input type="password" id="pass" class="login-input" placeholder="Password">
-            
-            <button onclick="handleAuth()" class="btn-apple" id="authBtn">Log In</button>
-            <p onclick="toggleAuthMode()" style="margin-top:20px; font-size:0.85rem; opacity:0.6; cursor:pointer;" id="toggleText">Create Apple ID-style Account</p>
+            <h2 style="margin-bottom: 10px;">Uni Hub Cloud</h2>
+            <p style="opacity: 0.6; margin-bottom: 20px;">Purple Edition</p>
+            <div id="loginMsg" style="color:#ef4444; font-size:0.9rem;"></div>
+            <input type="email" id="email" class="inp" placeholder="Email">
+            <input type="password" id="pass" class="inp" placeholder="Password">
+            <button onclick="handleAuth()" class="btn" id="authBtn">Log In</button>
+            <p onclick="toggleAuthMode()" style="margin-top:15px; cursor:pointer; opacity:0.6; font-size:0.9rem;" id="toggleText">Create Account</p>
         </div>
     </div>
 
-    <div id="mainContainer" class="container fade-in">
+    <div id="mainContainer" class="container">
         
         <div class="hero">
-            <div class="glass hero-card">
-                <button class="logout-btn" onclick="logout()">Sign Out</button>
-                <h1 style="font-size:2.2rem; font-weight:700; margin-bottom:10px;">Hello, <span id="usernameDisp" style="color:var(--primary)">Stathis</span>.</h1>
-                <p style="opacity:0.7; font-size:1.1rem;">Ready for deep work?</p>
-                <div class="stat-pill">
-                    <i class="fas fa-bolt" style="color:#fbbf24"></i> <span id="streakCount">0</span> Session Streak
-                </div>
+            <div>
+                <h1>Hello, <span id="usernameDisp" style="color:var(--accent)">Stathis</span>.</h1>
+                <p>Ready to focus? Streak: <span id="streakCount">0</span> 🔥</p>
             </div>
-
-            <div class="glass todo-widget">
-                <h3 style="margin-bottom:15px; font-size:1rem; opacity:0.8; text-transform:uppercase; letter-spacing:1px;">Tasks</h3>
-                <div class="todo-input-group">
-                    <input type="text" id="todoIn" class="login-input" style="margin:0; padding:10px;" placeholder="Add task...">
-                    <button onclick="addTodo()" class="btn-apple" style="width:auto; margin:0; padding:0 15px;">+</button>
-                </div>
-                <div id="todoList" class="todo-list"></div>
+            <div class="home-tools">
+                <div class="tool-btn" onclick="openHomeTimer()" title="Timer"><i class="fas fa-stopwatch"></i></div>
+                <div class="tool-btn" onclick="toggleSidebar()" title="Settings"><i class="fas fa-sliders-h"></i></div>
+                <div class="tool-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></div>
             </div>
         </div>
 
-        <div id="subjectsGrid" class="grid"></div>
+        <div id="subjectsSection">
+            <h3 style="margin-bottom: 20px; opacity: 0.8;">YOUR SUBJECTS</h3>
+            <div id="subjectsGrid" class="grid"></div>
+        </div>
 
-    </div>
+        <div id="chapterSection" class="chapter-container">
+            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                <button onclick="showGrid()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
+                <h2 id="chapterTitle">Subject Name</h2>
+            </div>
+            <div id="chapterList" class="chapter-list"></div>
+        </div>
 
-    <div class="fab-container" id="dashFabs">
-        <div class="fab" onclick="openSidebarDemo()" title="Open Tools"><i class="fas fa-layer-group"></i></div>
     </div>
 
     <div id="viewerOverlay" class="viewer-overlay">
-        
         <div class="floating-back" onclick="closeViewer()">
-            <i class="fas fa-chevron-left"></i> Dashboard
+            <i class="fas fa-chevron-left"></i> Exit Focus
         </div>
-
         <iframe id="contentFrame" src=""></iframe>
-
+        
         <div id="sidebar" class="sidebar">
-            <div class="sidebar-handle" onclick="toggleSidebar()">
-                <i class="fas fa-chevron-left" id="handleIcon"></i>
-            </div>
-
-            <div class="sidebar-section">
-                <h3>Focus Timer</h3>
+            <div class="sidebar-handle" onclick="toggleSidebar()"><i class="fas fa-chevron-left" id="handleIcon"></i></div>
+            
+            <div>
+                <h3 style="margin-bottom:10px; opacity:0.6;">TIMER</h3>
                 <div id="timerDisplay" class="timer-display">25:00</div>
                 <div class="timer-grid">
                     <button class="btn-sm" onclick="startTimer(25)">25'</button>
                     <button class="btn-sm" onclick="startTimer(50)">50'</button>
                     <button class="btn-sm" onclick="startTimer(90)">90'</button>
-                    <button class="btn-sm" style="background:#ef4444;" onclick="stopTimer()">STOP</button>
+                    <button class="btn-sm" onclick="startTimer(5)">5'</button>
                 </div>
+                <button class="btn" style="background:#ef4444; margin-top:10px;" onclick="stopTimer()">STOP</button>
             </div>
 
-            <div class="sidebar-section" style="flex:1; display:flex; flex-direction:column;">
-                <h3>Notes</h3>
-                <textarea id="notesArea" class="notepad" placeholder="Type your thoughts..." oninput="saveNotes()"></textarea>
+            <div style="flex:1;">
+                <h3 style="margin-bottom:10px; opacity:0.6;">NOTES</h3>
+                <textarea id="notesArea" class="notepad" placeholder="Session notes..." oninput="saveNotes()"></textarea>
             </div>
 
-            <div class="sidebar-section">
-                <h3>Appearance</h3>
-                <div class="theme-row">
-                    <div class="theme-dot" style="background:#8b5cf6" onclick="setTheme('default')"></div>
-                    <div class="theme-dot" style="background:#3b82f6" onclick="setTheme('ocean')"></div>
-                    <div class="theme-dot" style="background:#10b981" onclick="setTheme('forest')"></div>
-                    <div class="theme-dot" style="background:#f43f5e" onclick="setTheme('sunset')"></div>
+            <div>
+                <h3 style="margin-bottom:10px; opacity:0.6;">THEMES</h3>
+                <div class="theme-dots">
+                    <div class="dot" style="background:#8b5cf6" onclick="setTheme('default')"></div>
+                    <div class="dot" style="background:#00d2ff" onclick="setTheme('ocean')"></div>
+                    <div class="dot" style="background:#2ecc71" onclick="setTheme('forest')"></div>
+                    <div class="dot" style="background:#fbbf24" onclick="setTheme('sunset')"></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="homeTimerModal" class="modal-bg">
+        <div class="glass modal-box">
+            <h3>Quick Timer</h3>
+            <div id="homeTimerDisplay" style="font-size:3rem; font-weight:800; margin:20px 0;">25:00</div>
+            <div class="timer-grid">
+                <button class="btn-sm" onclick="startTimer(25)">Pomodoro</button>
+                <button class="btn-sm" onclick="startTimer(50)">Deep</button>
+                <button class="btn-sm" onclick="startTimer(90)">Flow</button>
+                <button class="btn-sm" onclick="startTimer(5)">Quick</button>
+            </div>
+            <button class="btn" onclick="document.getElementById('homeTimerModal').style.display='none'" style="margin-top:20px; background:rgba(255,255,255,0.1);">Close</button>
         </div>
     </div>
 
@@ -303,14 +279,13 @@
         const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- 2. STATE ---
+        // --- 2. DATA ---
         let dbData = null;
         let isLoginMode = true;
         let timerInterval = null;
 
-        // --- 3. SUBJECTS DATA ---
         const subjects = [
-            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "test.html"}] },
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"}, {name: "Κεφ 2: Νευρικό", file: "notes/anatomy2.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [{name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html"}] },
             { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
             { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [] },
@@ -319,14 +294,12 @@
             { id: 7, title: "Προληπτική", icon: "fa-shield-virus", files: [] }
         ];
 
-        // --- 4. AUTH LOGIC ---
+        // --- 3. AUTH ---
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
             const msg = document.getElementById('loginMsg');
-            
-            if(!email || !password) return msg.innerText = "Please fill all fields.";
-
+            if(!email || !password) return msg.innerText = "Fill all fields";
             try {
                 if(isLoginMode) {
                     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
@@ -334,8 +307,7 @@
                 } else {
                     const { error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) throw error;
-                    alert("Account created! Please log in.");
-                    toggleAuthMode();
+                    alert("Account created. Log in."); toggleAuthMode();
                 }
             } catch(e) { msg.innerText = e.message; }
         }
@@ -343,175 +315,125 @@
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
             document.getElementById('authBtn').innerText = isLoginMode ? "Log In" : "Create Account";
-            document.getElementById('toggleText').innerText = isLoginMode ? "New here? Create Account" : "Have an account? Log In";
+            document.getElementById('toggleText').innerText = isLoginMode ? "Create Account" : "Log In";
         }
 
         async function initApp(user) {
-            let { data, error } = await supabaseClient.from('profiles').select('*').eq('user_id', user.id).single();
+            let { data } = await supabaseClient.from('profiles').select('*').eq('user_id', user.id).single();
             if(!data) {
-                const { data: newProf } = await supabaseClient.from('profiles').insert([{ 
-                    user_id: user.id, streak: 0, todos: [], theme: 'default', notes: '' 
-                }]).select().single();
+                const { data: newProf } = await supabaseClient.from('profiles').insert([{ user_id: user.id, streak: 0, theme: 'default', notes: '' }]).select().single();
                 data = newProf;
             }
             dbData = data;
-
             document.getElementById('loginScreen').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
             document.getElementById('usernameDisp').innerText = user.email.split('@')[0];
-            
-            // Sync UI
             document.getElementById('streakCount').innerText = dbData.streak;
             document.getElementById('notesArea').value = dbData.notes || '';
             setTheme(dbData.theme || 'default', false);
-            renderTodos();
             renderSubjects();
         }
 
         async function sync() {
-            if(!dbData) return;
-            await supabaseClient.from('profiles').update({
-                streak: dbData.streak, todos: dbData.todos, theme: dbData.theme, notes: dbData.notes
-            }).eq('user_id', dbData.user_id);
+            if(dbData) await supabaseClient.from('profiles').update({ streak: dbData.streak, theme: dbData.theme, notes: dbData.notes }).eq('user_id', dbData.user_id);
         }
 
-        // --- 5. RENDER LOGIC ---
+        // --- 4. NAVIGATION ---
         function renderSubjects() {
             const grid = document.getElementById('subjectsGrid');
             let html = '';
             subjects.forEach(s => {
+                // The 4 spans are for the border animation
                 html += `
-                <div class="glass card" onclick="openSubject(${s.id})">
-                    <div class="card-icon"><i class="fas ${s.icon}"></i></div>
+                <div class="glass card" onclick="openChapterMenu(${s.id})">
+                    <span></span><span></span><span></span><span></span>
+                    <div class="icon-box"><i class="fas ${s.icon}"></i></div>
                     <h3>${s.title}</h3>
-                    <p style="opacity:0.6; font-size:0.9rem; margin-top:5px;">${s.files.length} Files</p>
+                    <p style="opacity:0.6; margin-top:5px;">${s.files.length} Files</p>
                 </div>`;
             });
             grid.innerHTML = html;
         }
 
-        function openSubject(id) {
+        function openChapterMenu(id) {
             const sub = subjects.find(s => s.id === id);
-            if(sub.files.length > 0) openViewer(sub.files[0].file);
-            else alert("Folder is empty.");
+            document.getElementById('subjectsSection').style.display = 'none';
+            document.getElementById('chapterSection').style.display = 'block';
+            document.getElementById('chapterTitle').innerText = sub.title;
+            
+            const list = document.getElementById('chapterList');
+            if(sub.files.length === 0) {
+                list.innerHTML = '<p style="text-align:center; opacity:0.6">No files yet.</p>';
+                return;
+            }
+            let html = '';
+            sub.files.forEach(f => {
+                html += `
+                <div class="chapter-item" onclick="openViewer('${f.file}')">
+                    <span>${f.name}</span>
+                    <i class="fas fa-play" style="font-size:0.8rem; color:var(--accent)"></i>
+                </div>`;
+            });
+            list.innerHTML = html;
         }
 
-        // --- 6. VIEWER & SIDEBAR LOGIC ---
+        function showGrid() {
+            document.getElementById('subjectsSection').style.display = 'block';
+            document.getElementById('chapterSection').style.display = 'none';
+        }
+
         function openViewer(url) {
             document.getElementById('viewerOverlay').classList.add('active');
             document.getElementById('contentFrame').src = url;
-            document.getElementById('dashFabs').style.display = 'none'; // Hide Dashboard FABs
-            
-            // Ensure Sidebar is closed initially
-            const sb = document.getElementById('sidebar');
-            sb.classList.remove('open');
-            document.getElementById('handleIcon').className = "fas fa-chevron-left";
+            // Auto open sidebar slightly or keep closed? Keep closed for full focus.
         }
 
         function closeViewer() {
             document.getElementById('viewerOverlay').classList.remove('active');
-            document.getElementById('contentFrame').src = "";
-            document.getElementById('dashFabs').style.display = 'flex';
+            document.getElementById('contentFrame').src = '';
             stopTimer();
         }
 
         function toggleSidebar() {
             const sb = document.getElementById('sidebar');
             sb.classList.toggle('open');
-            
-            // Toggle Arrow Icon
-            const icon = document.getElementById('handleIcon');
-            if(sb.classList.contains('open')) {
-                icon.className = "fas fa-chevron-right";
-            } else {
-                icon.className = "fas fa-chevron-left";
-            }
+            document.getElementById('handleIcon').className = sb.classList.contains('open') ? "fas fa-chevron-right" : "fas fa-chevron-left";
         }
 
-        // For dashboard FAB demo
-        function openSidebarDemo() {
-            openViewer(''); // Just open empty viewer to show sidebar
-            setTimeout(() => toggleSidebar(), 100);
-        }
+        // --- 5. TOOLS ---
+        function openHomeTimer() { document.getElementById('homeTimerModal').style.display = 'flex'; }
 
-        // --- 7. TIMER ---
         function startTimer(min) {
             stopTimer();
             let sec = min * 60;
             updateTime(sec);
             timerInterval = setInterval(() => {
-                sec--;
-                updateTime(sec);
+                sec--; updateTime(sec);
                 if(sec <= 0) {
-                    stopTimer();
-                    alert("Focus Session Complete!");
-                    dbData.streak++;
-                    document.getElementById('streakCount').innerText = dbData.streak;
-                    sync();
+                    stopTimer(); alert("Session Done!"); dbData.streak++; 
+                    document.getElementById('streakCount').innerText = dbData.streak; sync();
                 }
             }, 1000);
         }
 
-        function stopTimer() {
-            clearInterval(timerInterval);
-            document.getElementById('timerDisplay').innerText = "00:00";
-        }
-
+        function stopTimer() { clearInterval(timerInterval); updateTime(0); }
         function updateTime(sec) {
             const m = Math.floor(sec/60).toString().padStart(2,'0');
             const s = (sec%60).toString().padStart(2,'0');
             document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+            document.getElementById('homeTimerDisplay').innerText = `${m}:${s}`;
         }
 
-        // --- 8. UTILS ---
-        function setTheme(name, save = true) {
-            document.body.setAttribute('data-theme', name);
-            if(save && dbData) { dbData.theme = name; sync(); }
+        function setTheme(t, save = true) {
+            document.body.setAttribute('data-theme', t);
+            if(save && dbData) { dbData.theme = t; sync(); }
         }
 
-        function saveNotes() {
-            dbData.notes = document.getElementById('notesArea').value;
-            sync();
-        }
+        function saveNotes() { dbData.notes = document.getElementById('notesArea').value; sync(); }
 
-        function addTodo() {
-            const v = document.getElementById('todoIn').value;
-            if(!v) return;
-            if(!dbData.todos) dbData.todos = [];
-            dbData.todos.push(v);
-            document.getElementById('todoIn').value = '';
-            renderTodos();
-            sync();
-        }
-
-        function renderTodos() {
-            const list = document.getElementById('todoList');
-            list.innerHTML = '';
-            if(dbData.todos) {
-                dbData.todos.forEach((t, i) => {
-                    list.innerHTML += `
-                    <div class="todo-item">
-                        <div class="check-circle" onclick="delTodo(${i})"></div>
-                        <span style="flex:1; margin-left:10px;">${t}</span>
-                    </div>`;
-                });
-            }
-        }
-
-        function delTodo(i) {
-            dbData.todos.splice(i, 1);
-            renderTodos();
-            sync();
-        }
-
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            location.reload();
-        }
-
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-            if (session) initApp(session.user);
-        });
+        async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+        
+        supabaseClient.auth.onAuthStateChange((event, session) => { if (session) initApp(session.user); });
 
     </script>
 </body>
