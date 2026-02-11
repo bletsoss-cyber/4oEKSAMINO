@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Pro</title>
+    <title>Uni Hub Pro - Ultimate Focus</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -11,195 +11,196 @@
         /* --- 1. SETUP & COLORS --- */
         :root {
             --bg-dark: #0f172a;
-            --bg-light: #f8fafc;
-            --card-bg-dark: rgba(30, 41, 59, 0.7);
-            --card-bg-light: rgba(255, 255, 255, 0.85);
+            --card-dark: rgba(30, 41, 59, 0.7);
             --text-dark: #e2e8f0;
-            --text-light: #1e293b;
-            --accent: #6366f1; /* Indigo Main */
-            --accent-sec: #8b5cf6; /* Purple Secondary */
-            --border-dark: 1px solid rgba(255, 255, 255, 0.1);
-            --border-light: 1px solid rgba(0, 0, 0, 0.05);
+            --accent: #6366f1; /* Indigo */
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --success: #10b981; 
+            --border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Default Theme (Dark) */
         body {
-            --bg: var(--bg-dark);
-            --card: var(--card-bg-dark);
-            --text: var(--text-dark);
-            --border: var(--border-dark);
-            
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
             font-family: 'Outfit', sans-serif;
             margin: 0; padding: 0;
             min-height: 100vh;
             background-image: 
                 radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.15), transparent 40%);
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        /* Light Theme Override */
-        body[data-theme="light"] {
-            --bg: var(--bg-light);
-            --card: var(--card-bg-light);
-            --text: var(--text-light);
-            --border: var(--border-light);
+                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1), transparent 40%);
+            overflow-x: hidden;
         }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
 
-        /* --- 2. HERO SECTION (Αντί για Search Bar) --- */
+        /* --- 2. HERO SECTION --- */
         .hero {
-            background: linear-gradient(135deg, var(--accent), var(--accent-sec));
-            border-radius: 24px;
-            padding: 40px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 50px;
-            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.4);
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 24px; padding: 40px; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 50px; box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.4);
         }
-
-        /* Διακοσμητικοί κύκλοι στο background του Hero */
-        .hero::before {
-            content: ''; position: absolute; top: -50%; left: -10%; width: 300px; height: 300px;
-            background: rgba(255,255,255,0.1); border-radius: 50%;
-        }
-        .hero::after {
-            content: ''; position: absolute; bottom: -50%; right: -5%; width: 200px; height: 200px;
-            background: rgba(255,255,255,0.1); border-radius: 50%;
-        }
-
         .hero-text h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; }
-        .hero-text p { font-size: 1rem; opacity: 0.9; font-weight: 300; }
-        
-        .date-widget {
-            text-align: right;
-            background: rgba(0,0,0,0.2);
-            padding: 15px 25px;
-            border-radius: 16px;
-            backdrop-filter: blur(5px);
-        }
-        .time { font-size: 1.8rem; font-weight: 700; letter-spacing: 1px; }
-        .date { font-size: 0.9rem; opacity: 0.8; }
+        .hero-text p { opacity: 0.9; }
+        .time-widget { text-align: right; background: rgba(0,0,0,0.2); padding: 15px 25px; border-radius: 16px; backdrop-filter: blur(5px); }
+        .clock { font-size: 1.8rem; font-weight: 700; }
 
-        /* --- 3. GRID LAYOUT --- */
-        .grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 25px;
-            animation: fadeIn 0.8s ease;
-        }
-
+        /* --- 3. GRID SYSTEM --- */
+        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: fadeIn 0.8s ease; }
         .card {
-            background: var(--card);
-            border: var(--border);
-            width: 280px; /* Fixed width */
-            padding: 25px;
-            border-radius: 20px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
-            backdrop-filter: blur(12px);
+            background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
+            border-radius: 20px; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(12px);
             display: flex; flex-direction: column; align-items: center; text-align: center;
         }
-
-        .card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.2); }
-
+        .card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); }
         .icon-box {
-            width: 65px; height: 65px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; color: var(--accent);
-            margin-bottom: 15px;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
+            width: 65px; height: 65px; background: rgba(255,255,255,0.05); border-radius: 18px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); margin-bottom: 15px;
         }
 
-        .card h3 { font-size: 1.1rem; margin-bottom: 5px; color: var(--text); }
-        .card span { font-size: 0.8rem; opacity: 0.6; }
-
-        /* --- 4. VIEWER (Mac Style) --- */
+        /* --- 4. VIEWER --- */
         .viewer-container {
-            background: var(--card);
-            border: var(--border);
-            border-radius: 20px;
-            overflow: hidden;
-            height: 80vh;
-            display: flex; flex-direction: column;
-            animation: slideUp 0.5s ease;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            background: var(--card-dark); border: var(--border); border-radius: 20px; overflow: hidden;
+            height: 80vh; display: flex; flex-direction: column; animation: slideUp 0.5s ease;
         }
-
-        .mac-header {
-            padding: 12px 20px;
-            background: rgba(0,0,0,0.2);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
+        .mac-header { padding: 12px 20px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
         .dots { display: flex; gap: 8px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .red { background: #ff5f57; cursor: pointer; } 
-        .yellow { background: #febc2e; } 
-        .green { background: #28c840; }
-
-        .title-bar { font-size: 0.9rem; opacity: 0.7; }
-        
+        .red { background: #ff5f57; cursor: pointer; } .yellow { background: #febc2e; } .green { background: #28c840; }
         iframe { flex: 1; width: 100%; border: none; background: white; }
 
-        /* Utilities */
-        .hidden { display: none; }
+        /* --- 5. MULTI-MODE TIMER PANEL (NEW!) --- */
+        .fab {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: var(--accent); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            cursor: pointer; box-shadow: 0 10px 25px var(--accent-glow); z-index: 100;
+            transition: transform 0.2s;
+        }
+        .fab:hover { transform: scale(1.1); }
+
+        .timer-panel {
+            position: fixed; bottom: 100px; right: 30px; width: 340px;
+            background: #0f172a; border: 1px solid var(--accent);
+            border-radius: 24px; padding: 25px; z-index: 99;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: none; animation: slideUp 0.3s;
+        }
+        .timer-panel.active { display: block; }
+
+        .modes-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+        }
+        .btn-mode {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dark); padding: 10px; border-radius: 12px;
+            cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .btn-mode:hover { background: rgba(255,255,255,0.1); }
+        .btn-mode.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .btn-mode i { font-size: 1.2rem; margin-bottom: 2px; }
+
+        /* Custom Input */
+        .custom-input {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 8px; border-radius: 8px; text-align: center; margin-top: 10px;
+            display: none;
+        }
+
+        .timer-display { font-size: 3.5rem; font-weight: 700; text-align: center; margin: 5px 0; letter-spacing: -2px; }
+        .mode-desc { text-align: center; font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; height: 1.2em; }
+
+        .btn-action { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        .btn-start { background: var(--success); color: white; }
+        .btn-stop { background: #ef4444; color: white; display: none; }
+
+        /* Break Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 200; display: none;
+            justify-content: center; align-items: center; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #1e293b; padding: 40px; border-radius: 24px; text-align: center; max-width: 400px;
+            border: 1px solid var(--success); animation: zoomIn 0.3s;
+        }
+
+        /* Utils */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Floating Theme Btn */
-        .theme-toggle {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 50px; height: 50px; border-radius: 50%;
-            background: var(--text); color: var(--bg);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 99;
-        }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
     <div class="container">
-        
         <div id="hero-section" class="hero">
             <div class="hero-text">
                 <h1 id="greeting">Καλησπέρα, Γιατρέ!</h1>
-                <p>Έτοιμος για διάβασμα; Επέλεξε μάθημα.</p>
+                <p>Επίλεξε μάθημα και ξεκίνα τη συνεδρία.</p>
             </div>
-            <div class="date-widget">
-                <div class="time" id="clock">00:00</div>
-                <div class="date" id="date">Δευτέρα, 1 Ιαν</div>
+            <div class="time-widget">
+                <div class="clock" id="clock">00:00</div>
+                <div id="date" style="opacity:0.7; font-size:0.9rem">--</div>
             </div>
         </div>
 
-        <main id="app">
-            </main>
-
+        <main id="app"></main>
     </div>
 
-    <div class="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-adjust"></i>
+    <div class="fab" onclick="toggleTimerPanel()">
+        <i class="fas fa-brain"></i>
     </div>
+
+    <div class="timer-panel" id="timerPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+            <h3 style="margin:0">Επιλογή Μεθόδου</h3>
+            <i class="fas fa-times" style="cursor:pointer; opacity:0.6" onclick="toggleTimerPanel()"></i>
+        </div>
+
+        <div class="modes-grid">
+            <button class="btn-mode active" onclick="setMode(25, 'Pomodoro', 'Ιδανικό για γρήγορο, συγκεντρωμένο διάβασμα.', this)">
+                <i class="fas fa-stopwatch"></i> Pomodoro (25')
+            </button>
+            <button class="btn-mode" onclick="setMode(50, 'Deep Work', 'Για δύσκολες έννοιες και απομνημόνευση.', this)">
+                <i class="fas fa-brain"></i> Deep Work (50')
+            </button>
+            <button class="btn-mode" onclick="setMode(90, 'Flow State', 'Για μεγάλα κεφάλαια χωρίς διακοπή.', this)">
+                <i class="fas fa-fire"></i> Flow (90')
+            </button>
+            <button class="btn-mode" onclick="setMode(5, 'Quick Start', 'Ξεκόλλα από την αναβλητικότητα τώρα.', this)">
+                <i class="fas fa-bolt"></i> Quick (5')
+            </button>
+        </div>
+        
+        <button class="btn-mode" style="width:100%; flex-direction:row; justify-content:center; gap:10px" onclick="toggleCustomInput(this)">
+            <i class="fas fa-cog"></i> Προσαρμοσμένος Χρόνος
+        </button>
+        <input type="number" id="customMin" class="custom-input" placeholder="Λεπτά (π.χ. 40)" onchange="setCustomMode(this.value)">
+
+        <div class="timer-display" id="timeDisplay">25:00</div>
+        <div class="mode-desc" id="modeDesc">Ιδανικό για γρήγορο, συγκεντρωμένο διάβασμα.</div>
+
+        <button class="btn-action btn-start" id="startBtn" onclick="startTimer()">Έναρξη Συνεδρίας</button>
+        <button class="btn-action btn-stop" id="stopBtn" onclick="resetTimer()">Διακοπή</button>
+    </div>
+
+    <div class="modal-overlay" id="breakModal">
+        <div class="modal-content">
+            <div style="font-size:3rem; color:var(--success); margin-bottom:15px"><i class="fas fa-check-circle"></i></div>
+            <h2>Μπράβο!</h2>
+            <p>Η συνεδρία ολοκληρώθηκε. Κάνε ένα διάλειμμα.</p>
+            <button class="btn-action btn-start" onclick="closeModal()">ΟΚ</button>
+        </div>
+    </div>
+
+    <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
     <script>
         // --- DATA ---
         const subjects = [
-            { 
-                id: 1, title: "Ανατομία III", icon: "fa-skull", 
-                files: [ {name: "Κεφ 1: Εισαγωγή", file: "anatomy1.html"} ] 
-            },
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "anatomy1.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [] },
             { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
             { id: 4, title: "Οδοντική Χειρ. II", icon: "fa-tooth", files: [] },
@@ -211,98 +212,142 @@
         const app = document.getElementById('app');
         const hero = document.getElementById('hero-section');
 
-        // 1. RENDER DASHBOARD (Grid)
+        // --- RENDER ---
         function renderHome() {
-            hero.style.display = 'flex'; // Show Hero
-            
+            hero.style.display = 'flex';
             let html = '<div class="grid">';
             subjects.forEach(sub => {
                 html += `
                 <div class="card" onclick="openSubject(${sub.id})">
                     <div class="icon-box"><i class="fas ${sub.icon}"></i></div>
                     <h3>${sub.title}</h3>
-                    <span>${sub.files.length} Αρχεία</span>
+                    <span style="opacity:0.6; font-size:0.85rem">${sub.files.length} Αρχεία</span>
                 </div>`;
             });
             html += '</div>';
             app.innerHTML = html;
         }
 
-        // 2. OPEN SUBJECT (File List)
         function openSubject(id) {
             const sub = subjects.find(s => s.id === id);
-            hero.style.display = 'none'; // Hide Hero to focus
-            
+            hero.style.display = 'none';
             let html = `
             <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px;">
-                <button onclick="renderHome()" style="background:none; border:none; color:var(--text); cursor:pointer; font-size:1.2rem;">
+                <button onclick="renderHome()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">
                     <i class="fas fa-arrow-left"></i>
                 </button>
                 <h2 style="margin:0">${sub.title}</h2>
             </div>
             <div class="grid">`;
-
-            if(sub.files.length === 0) {
-                html += `<p style="opacity:0.6; width:100%; text-align:center;">Δεν υπάρχουν αρχεία.</p>`;
-            } else {
-                sub.files.forEach(f => {
-                    html += `
-                    <div class="card" onclick="openViewer('${f.file}', '${f.name}')">
-                        <div class="icon-box" style="color:var(--text)"><i class="fas fa-file-alt"></i></div>
-                        <h3>${f.name}</h3>
-                        <span>Προβολή</span>
-                    </div>`;
-                });
-            }
+            if(sub.files.length === 0) html += `<p style="opacity:0.6">Δεν υπάρχουν αρχεία.</p>`;
+            else sub.files.forEach(f => {
+                html += `
+                <div class="card" onclick="openViewer('${f.file}', '${f.name}')">
+                    <div class="icon-box" style="color:white"><i class="fas fa-file-alt"></i></div>
+                    <h3>${f.name}</h3>
+                </div>`;
+            });
             html += '</div>';
             app.innerHTML = html;
         }
 
-        // 3. VIEWER (Mac Window)
         function openViewer(file, name) {
             app.innerHTML = `
                 <div class="viewer-container">
                     <div class="mac-header">
-                        <div class="dots">
-                            <div class="dot red" onclick="renderHome()"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
-                        <div class="title-bar">${name}</div>
-                        <div style="width:40px"></div>
+                        <div class="dots"><div class="dot red" onclick="renderHome()"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                        <div style="opacity:0.7">${name}</div><div></div>
                     </div>
                     <iframe src="${file}"></iframe>
-                </div>
-            `;
+                </div>`;
         }
 
-        // --- UTILS (Clock & Theme) ---
-        function updateTime() {
-            const now = new Date();
-            // Clock
-            const timeString = now.toLocaleTimeString('el-GR', {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('clock').innerText = timeString;
+        // --- TIMER LOGIC ---
+        let timer;
+        let timeLeft = 25 * 60;
+        let isRunning = false;
+
+        function toggleTimerPanel() {
+            document.getElementById('timerPanel').classList.toggle('active');
+        }
+
+        function setMode(minutes, name, desc, btn) {
+            if(isRunning) return; 
+            timeLeft = minutes * 60;
+            updateDisplay();
+            document.getElementById('modeDesc').innerText = desc;
             
-            // Date
-            const dateString = now.toLocaleDateString('el-GR', {weekday: 'long', day: 'numeric', month: 'short'});
-            document.getElementById('date').innerText = dateString;
-
-            // Greeting
-            const hour = now.getHours();
-            let greet = "Καλησπέρα";
-            if(hour < 12) greet = "Καλημέρα";
-            else if(hour > 19) greet = "Καληνύχτα";
-            document.getElementById('greeting').innerText = `${greet}, Γιατρέ!`;
-        }
-        setInterval(updateTime, 1000);
-        updateTime(); // Run once immediately
-
-        function toggleTheme() {
-            const body = document.body;
-            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            // UI Update
+            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            
+            // Hide custom input if not selected
+            document.getElementById('customMin').style.display = 'none';
         }
 
-        // Start
+        function toggleCustomInput(btn) {
+            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const input = document.getElementById('customMin');
+            input.style.display = 'block';
+            input.focus();
+            document.getElementById('modeDesc').innerText = "Πληκτρολόγησε τα λεπτά που θέλεις.";
+        }
+
+        function setCustomMode(val) {
+            if(val && val > 0) {
+                timeLeft = val * 60;
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timeDisplay').innerText = `${m}:${s}`;
+            if(isRunning) document.title = `(${m}:${s}) UniHub`;
+        }
+
+        function startTimer() {
+            if(isRunning) return;
+            isRunning = true;
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'inline-block';
+            timer = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                if(timeLeft <= 0) timeUp();
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.title = 'UniHub Pro';
+        }
+
+        function timeUp() {
+            resetTimer();
+            document.getElementById('breakModal').style.display = 'flex';
+            document.getElementById('alarmSound').play();
+            timeLeft = 5 * 60; updateDisplay();
+        }
+
+        function closeModal() {
+            document.getElementById('breakModal').style.display = 'none';
+        }
+
+        // --- CLOCK ---
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('el-GR', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('date').innerText = now.toLocaleDateString('el-GR', {weekday:'short', day:'numeric', month:'short'});
+            const h = now.getHours();
+            document.getElementById('greeting').innerText = (h<12 ? "Καλημέρα" : h>19 ? "Καληνύχτα" : "Καλησπέρα") + ", Γιατρέ!";
+        }, 1000);
+
         renderHome();
     </script>
 </body>
