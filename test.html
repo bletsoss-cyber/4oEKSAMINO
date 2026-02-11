@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πολυμερή - Οδοντιατρικά Υλικά: Quiz & Flashcards</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: #7f8c8d;
+            transition: color 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Quiz Styles */
+        .question-block {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .options label {
+            display: block;
+            margin: 5px 0;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .options label:hover {
+            background-color: #f0f8ff;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .correct { color: #27ae60; }
+        .incorrect { color: #c0392b; }
+
+        button.action-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+
+        button.action-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-container {
+            perspective: 1000px;
+            height: 300px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .front {
+            background-color: #fff;
+            border: 2px solid #3498db;
+            color: #2c3e50;
+        }
+
+        .back {
+            background-color: #3498db;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-controls {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-controls button {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card-controls button:hover {
+            background-color: #7f8c8d;
+        }
+
+        .hint {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 10px;
+        }
+        .back .hint { color: #eee; }
+
+    </style>
+</head>
+<body>
+
+    <h1>Επανάληψη: Πολυμερή & Οδοντιατρικά Υλικά</h1>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('quiz')">Quiz Πολλαπλής Επιλογής</button>
+            <button class="tab-btn" onclick="showTab('flashcards')">Flashcards</button>
+        </div>
+
+        <div id="quiz" class="content-section active">
+            <div id="quiz-container"></div>
+            <button class="action-btn" onclick="checkAnswers()">Έλεγχος Αποτελεσμάτων</button>
+            <div id="score-display" style="margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.2em;"></div>
+        </div>
+
+        <div id="flashcards" class="content-section">
+            <div class="flashcard-container" onclick="flipCard()">
+                <div class="flashcard" id="card-element">
+                    <div class="front">
+                        <h2 id="card-front-text">Ερώτηση</h2>
+                        <div class="hint">(Κάντε κλικ για απάντηση)</div>
+                    </div>
+                    <div class="back">
+                        <p id="card-back-text">Απάντηση</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-controls">
+                <button onclick="prevCard()">&#8592; Προηγούμενη</button>
+                <span id="card-counter">1 / 10</span>
+                <button onclick="nextCard()">Επόμενη &#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const quizData = [
+            {
+                q: "Ποια είναι η βασική διαφορά μεταξύ πολυμερισμού προσθήκης και συμπύκνωσης;",
+                options: [
+                    "Ο πολυμερισμός προσθήκης απαιτεί θέρμανση, ενώ της συμπύκνωσης φως.",
+                    "Στον πολυμερισμό συμπύκνωσης αποβάλλεται ένα μικρό μόριο (π.χ. νερό), ενώ στην προσθήκη όχι.",
+                    "Ο πολυμερισμός προσθήκης δημιουργεί διακλαδώσεις, ενώ της συμπύκνωσης γραμμικές αλυσίδες.",
+                    "Δεν υπάρχει ουσιαστική διαφορά."
+                ],
+                correct: 1
+            },
+            {
+                q: "Ποια χημική ένωση χρησιμοποιείται συχνά ως 'εκκινητής' (initiator) στον χημικό πολυμερισμό;",
+                options: [
+                    "Τριτοταγής αμίνη",
+                    "Υδροκινόνη",
+                    "Υπεροξείδιο του βενζολίου",
+                    "Μεθακρυλικό οξύ"
+                ],
+                correct: 2
+            },
+            {
+                q: "Τι αποτέλεσμα έχει η διασύνδεση (cross-linking) στις ιδιότητες ενός πολυμερούς;",
+                options: [
+                    "Το κάνει πιο εύκαμπτο και μειώνει το σημείο τήξης.",
+                    "Το μετατρέπει από θερμοσκληρυνόμενο σε θερμοπλαστικό.",
+                    "Αυξάνει τη σκληρότητα, την ευθραυστότητα και την αντίσταση στους διαλύτες.",
+                    "Μειώνει το μοριακό βάρος."
+                ],
+                correct: 2
+            },
+            {
+                q: "Ποια είναι τα 4 στάδια του πολυμερισμού προσθήκης με τη σειρά;",
+                options: [
+                    "Έναρξη -> Ενεργοποίηση -> Πρόοδος -> Τερματισμός",
+                    "Ενεργοποίηση -> Έναρξη -> Πρόοδος -> Τερματισμός",
+                    "Ενεργοποίηση -> Πρόοδος -> Ανάμειξη -> Τερματισμός",
+                    "Έναρξη -> Πρόοδος -> Διακλάδωση -> Τερματισμός"
+                ],
+                correct: 1
+            },
+            {
+                q: "Τι είναι οι πλαστικοποιητές (plasticizers) και πώς λειτουργούν;",
+                options: [
+                    "Ενισχυτικές ίνες που αυξάνουν την αντοχή.",
+                    "Μόρια που προκαλούν διασύνδεση των αλυσίδων.",
+                    "Ουσίες χαμηλού μοριακού βάρους που μπαίνουν ανάμεσα στις αλυσίδες, μειώνουν τις δυνάμεις έλξης και κάνουν το υλικό πιο μαλακό.",
+                    "Καταλύτες που επιταχύνουν την πήξη."
+                ],
+                correct: 2
+            },
+            {
+                q: "Ποια δομή συμπολυμερούς περιγράφεται ως -A-B-A-B-A-B-;",
+                options: [
+                    "Τυχαίο (Random)",
+                    "Κατά συστάδες (Block)",
+                    "Εναλλακτικό (Alternating)",
+                    "Εμβολιασμένο (Graft)"
+                ],
+                correct: 2
+            },
+            {
+                q: "Τι ισχύει για τη θερμοκρασία υαλώδους μετάπτωσης (Tg);",
+                options: [
+                    "Είναι η θερμοκρασία που το υλικό βράζει.",
+                    "Είναι η θερμοκρασία κάτω από την οποία το υλικό είναι σκληρό/εύθραυστο και πάνω από την οποία γίνεται μαλακό/ελαστικό.",
+                    "Δεν επηρεάζεται από την προσθήκη πλαστικοποιητών.",
+                    "Είναι πάντα 100°C για όλα τα πολυμερή."
+                ],
+                correct: 1
+            },
+            {
+                q: "Στα σύνθετα υλικά (composites), τι ρόλο παίζουν τα ενισχυτικά σωματίδια (fillers);",
+                options: [
+                    "Λειτουργούν ως μήτρα που συγκρατεί το υλικό.",
+                    "Μειώνουν το ιξώδες για ευκολότερη ροή.",
+                    "Βελτιώνουν τις μηχανικές ιδιότητες (ακαμψία, αντοχή) και μειώνουν τη συστολή πολυμερισμού.",
+                    "Δίνουν μόνο χρώμα στο υλικό."
+                ],
+                correct: 2
+            },
+            {
+                q: "Ποια μέθοδος πολυμερισμού χρησιμοποιεί φως (π.χ. μπλε φως) για την ενεργοποίηση;",
+                options: [
+                    "Χημικός πολυμερισμός",
+                    "Θερμικός πολυμερισμός",
+                    "Φωτο-πολυμερισμός",
+                    "Πολυμερισμός συμπύκνωσης"
+                ],
+                correct: 2
+            },
+            {
+                q: "Ποια είναι η διαφορά μεταξύ Mn και Mw στο μοριακό βάρος;",
+                options: [
+                    "Το Mn είναι ευαίσθητο στα μεγάλα μόρια, ενώ το Mw στα μικρά.",
+                    "Το Mn είναι ο αριθμητικός μέσος όρος (ευαίσθητο στα μικρά μόρια), ενώ το Mw ο μέσος όρος βάρους (ευαίσθητο στα μεγάλα μόρια).",
+                    "Δεν υπάρχει διαφορά, είναι το ίδιο.",
+                    "Το Mw είναι πάντα μικρότερο από το Mn."
+                ],
+                correct: 1
+            },
+            {
+                q: "Τα θερμοπλαστικά πολυμερή:",
+                options: [
+                    "Δεν λιώνουν όταν θερμανθούν.",
+                    "Έχουν πυκνό δίκτυο διασυνδέσεων.",
+                    "Μπορούν να μαλακώσουν με θέρμανση και να ξαναπάρουν το σχήμα τους (ανακυκλώσιμα).",
+                    "Είναι πάντα κρυσταλλικά."
+                ],
+                correct: 2
+            },
+            {
+                q: "Ποιος παράγοντας εμποδίζει την κρυσταλλικότητα σε ένα πολυμερές;",
+                options: [
+                    "Η απλή δομή της αλυσίδας (π.χ. πολυαιθυλένιο).",
+                    "Οι ισχυροί δευτερεύοντες δεσμοί.",
+                    "Οι μεγάλες πλευρικές ομάδες και οι διακλαδώσεις που εμποδίζουν την πυκνή διάταξη.",
+                    "Η αργή ψύξη."
+                ],
+                correct: 2
+            }
+        ];
+
+        const flashcardsData = [
+            {
+                front: "Ποια είναι τα 4 στάδια του πολυμερισμού προσθήκης;",
+                back: "1. Ενεργοποίηση (Activation)<br>2. Έναρξη (Initiation)<br>3. Πρόοδος (Propagation)<br>4. Τερματισμός (Termination)"
+            },
+            {
+                front: "Πολυμερισμός Συμπύκνωσης",
+                back: "Αντίδραση όπου δύο μόρια ενώνονται με ταυτόχρονη <b>αποβολή ενός μικρού μορίου</b> (συνήθως νερό ή αλκοόλη).<br>Παράδειγμα: Σιλικόνες."
+            },
+            {
+                front: "Ελεύθερες Ρίζες (*)",
+                back: "Χημικές ενώσεις με ένα ασύζευκτο ηλεκτρόνιο. Είναι απαραίτητες για την <b>ενεργοποίηση</b> του πολυμερισμού προσθήκης."
+            },
+            {
+                front: "Διασύνδεση (Cross-linking)",
+                back: "Η δημιουργία χημικών δεσμών μεταξύ των αλυσίδων.<br>Μετατρέπει το υλικό σε τρισδιάστατο δίκτυο, αυξάνει τη σκληρότητα και το καθιστά <b>θερμοσκληρυνόμενο</b>."
+            },
+            {
+                front: "Θερμοκρασία Υαλώδους Μετάπτωσης (Tg)",
+                back: "Η θερμοκρασία όπου το υλικό αλλάζει από σκληρό/γυαλώδες σε μαλακό/ελαστικό.<br>Οι πλαστικοποιητές <b>μειώνουν</b> την Tg."
+            },
+            {
+                front: "Συμπολυμερές 'Block' (Κατά συστάδες)",
+                back: "Δομή: -A-A-A-B-B-B-<br>Μεγάλες ομάδες του μονομερούς Α ακολουθούνται από ομάδες του Β."
+            },
+            {
+                front: "Μηχανισμός Πλαστικοποιητή",
+                back: "Εισχωρεί ανάμεσα στις αλυσίδες, αυξάνει την απόσταση μεταξύ τους και μειώνει τις διαμοριακές δυνάμεις έλξης, κάνοντας το υλικό πιο μαλακό."
+            },
+            {
+                front: "Σύνθετα Υλικά (Composites)",
+                back: "Υλικά που αποτελούνται από:<br>1. <b>Μήτρα</b> (συνήθως πολυμερές)<br>2. <b>Ενισχυτικά σωματίδια/ίνες</b> (fillers)<br>Διατηρούν διακριτές φάσεις."
+            },
+            {
+                front: "Υπεροξείδιο του Βενζολίου",
+                back: "Ο πιο κοινός <b>εκκινητής</b> (initiator) για τον χημικό πολυμερισμό ή τον θερμικό πολυμερισμό. Διασπάται σε ελεύθερες ρίζες."
+            },
+            {
+                front: "Διαφορά Θερμοπλαστικών vs Θερμοσκληρυνόμενων",
+                back: "<b>Θερμοπλαστικά:</b> Γραμμικά/Διακλαδισμένα, μαλακώνουν με θέρμανση, επαναχρησιμοποιούνται.<br><b>Θερμοσκληρυνόμενα:</b> Διασυνδεδεμένα (Cross-linked), δεν λιώνουν, αποδομούνται σε υψηλές θερμοκρασίες."
+            }
+        ];
+
+        // --- QUIZ LOGIC ---
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            let html = '';
+            quizData.forEach((item, index) => {
+                html += `<div class="question-block" id="q-block-${index}">
+                            <div class="question-text">${index + 1}. ${item.q}</div>
+                            <div class="options">`;
+                item.options.forEach((opt, optIndex) => {
+                    html += `<label><input type="radio" name="q${index}" value="${optIndex}"> ${opt}</label>`;
+                });
+                html += `</div>
+                         <div class="feedback" id="feedback-${index}"></div>
+                         </div>`;
+            });
+            quizContainer.innerHTML = html;
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const feedback = document.getElementById(`feedback-${index}`);
+                
+                if (selected) {
+                    if (parseInt(selected.value) === item.correct) {
+                        score++;
+                        feedback.textContent = "Σωστό!";
+                        feedback.className = "feedback correct";
+                    } else {
+                        feedback.textContent = `Λάθος. Η σωστή απάντηση είναι: ${item.options[item.correct]}`;
+                        feedback.className = "feedback incorrect";
+                    }
+                } else {
+                    feedback.textContent = "Δεν απαντήθηκε.";
+                    feedback.className = "feedback incorrect";
+                }
+                feedback.style.display = "block";
+            });
+            
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.textContent = `Σκορ: ${score} / ${quizData.length} (${Math.round((score/quizData.length)*100)}%)`;
+        }
+
+        // --- FLASHCARD LOGIC ---
+        let currentCardIndex = 0;
+
+        function updateCard() {
+            const card = document.getElementById('card-element');
+            const frontText = document.getElementById('card-front-text');
+            const backText = document.getElementById('card-back-text');
+            const counter = document.getElementById('card-counter');
+
+            // Reset flip
+            card.classList.remove('flipped');
+            
+            // Wait for flip back to update text (small delay if it was flipped)
+            setTimeout(() => {
+                frontText.textContent = flashcardsData[currentCardIndex].front;
+                backText.innerHTML = flashcardsData[currentCardIndex].back;
+                counter.textContent = `${currentCardIndex + 1} / ${flashcardsData.length}`;
+            }, 150);
+        }
+
+        function flipCard() {
+            document.getElementById('card-element').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (currentCardIndex < flashcardsData.length - 1) {
+                currentCardIndex++;
+                updateCard();
+            } else {
+                currentCardIndex = 0; // Loop back
+                updateCard();
+            }
+        }
+
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCard();
+            } else {
+                currentCardIndex = flashcardsData.length - 1;
+                updateCard();
+            }
+        }
+
+        // --- TABS LOGIC ---
+        function showTab(tabName) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            // Find button that calls this function (rough way)
+            const buttons = document.querySelectorAll('.tab-btn');
+            if (tabName === 'quiz') buttons[0].classList.add('active');
+            else buttons[1].classList.add('active');
+        }
+
+        // Initialize
+        loadQuiz();
+        updateCard();
+
+    </script>
+</body>
+</html>
