@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Ultimate - Cloud Edition</title>
+    <title>Uni Hub Ultimate - Pro Cloud</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. THEME VARIABLES --- */
+        /* --- 1. THEME VARIABLES & CSS SETUP --- */
         :root {
-            /* DEFAULT (Purple) */
+            /* DEFAULT (Royal Purple) */
             --bg-dark: #0f172a;
             --card-dark: rgba(30, 41, 59, 0.7);
             --text-dark: #e2e8f0;
@@ -204,6 +204,7 @@
         .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .theme-btn { height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
         .theme-btn:hover { transform: scale(1.05); }
+        .theme-btn.active { border-color: white; transform: scale(1.1); }
 
         .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; letter-spacing: -2px; margin: 5px 0; }
         .modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -348,7 +349,9 @@
         // --- 1. SUPABASE CONFIGURATION ---
         const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
         const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // --- ERROR FIX: Ονομασία μεταβλητής ώστε να μην συγκρούεται ---
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let isLoginMode = true;
         let dbData = null;
@@ -363,10 +366,10 @@
 
             try {
                 if(isLoginMode) {
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
                     if(error) throw error;
                 } else {
-                    const { error } = await supabase.auth.signUp({ email, password });
+                    const { error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) throw error;
                     alert("Επιτυχία! Τώρα κάνε σύνδεση.");
                     toggleAuthMode();
@@ -385,11 +388,11 @@
         }
 
         async function initApp(user) {
-            let { data: profile } = await supabase.from('profiles').select('*').eq('user_id', user.id).single();
+            let { data: profile } = await supabaseClient.from('profiles').select('*').eq('user_id', user.id).single();
             
             // Create profile if doesn't exist
             if(!profile) {
-                const { data: newProf } = await supabase.from('profiles').insert([{ 
+                const { data: newProf } = await supabaseClient.from('profiles').insert([{ 
                     user_id: user.id, streak: 0, todos: [], theme: 'default' 
                 }]).select().single();
                 profile = newProf;
@@ -408,12 +411,13 @@
 
         async function sync() {
             if(!dbData) return;
-            await supabase.from('profiles').update({ 
+            await supabaseClient.from('profiles').update({ 
                 streak: dbData.streak, todos: dbData.todos, theme: dbData.theme 
             }).eq('user_id', dbData.user_id);
         }
 
         function updateUI() {
+            if(!dbData) return;
             document.getElementById('sessionCount').innerText = dbData.streak;
             setTheme(dbData.theme, false);
             
@@ -424,45 +428,15 @@
             }
         }
 
-        // --- 3. UI FUNCTIONS ---
-       const subjects = [
-            { 
-                id: 1, 
-                title: "Ανατομία III", 
-                icon: "fa-skull",
-                files: [
-                    { name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html" },
-                    { name: "Κεφ 2: Νευρικό", file: "notes/anatomy2.html" }
-                ]
-            },
-            { 
-                id: 2, 
-                title: "Εμβρυολογία", 
-                icon: "fa-baby-carriage",
-                files: [
-                    { name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html" }
-                ]
-            },
-            { 
-                id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", 
-                files: [ { name: "Κεφ 1: Εισαγωγή", file: "test.html" }, { name: "Κεφ 2: Κληρονομικότητα", file: "test.html" } ] 
-            }, 
-            { 
-                id: 4, title: "Οδοντική Χειρουργική", icon: "fa-tooth", 
-                files: [ { name: "Κεφ 1: Εισαγωγή", file: "test.html" } ] 
-            }, 
-            { 
-                id: 5, title: "Προκλινική", icon: "fa-notes-medical", 
-                files: [ { name: "Κεφ 1: Εργαλεία", file: "test.html" } ] 
-            }, 
-            { 
-                id: 6, title: "Ακτινολογία", icon: "fa-x-ray", 
-                files: [ { name: "Κεφ 1: Ακτίνες Χ", file: "test.html" } ] 
-            }, 
-            { 
-                id: 7, title: "Προληπτική Οδοντιατρική", icon: "fa-shield-virus", 
-                files: [ { name: "Κεφ 1: Φθορίωση", file: "test.html" } ] 
-            } 
+        // --- 3. UI FUNCTIONS (SUBJECTS & VIEWER) ---
+        const subjects = [
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"}, {name: "Κεφ 2: Νευρικό", file: "notes/anatomy2.html"}] },
+            { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [{name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html"}] },
+            { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
+            { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [] },
+            { id: 5, title: "Προκλινική", icon: "fa-notes-medical", files: [] },
+            { id: 6, title: "Ακτινολογία", icon: "fa-x-ray", files: [] },
+            { id: 7, title: "Προληπτική", icon: "fa-shield-virus", files: [] }
         ];
 
         function renderHome() {
@@ -516,7 +490,7 @@
             const val = document.getElementById('todoInput').value.trim();
             if(!val) return;
             if(!dbData.todos) dbData.todos = [];
-            dbData.todos.push(val); // Store simple string or object
+            dbData.todos.push(val); 
             sync(); updateUI();
             document.getElementById('todoInput').value = '';
         }
@@ -537,7 +511,7 @@
             sync(); updateUI();
         }
 
-        // --- 5. TIMER & PANELS ---
+        // --- 5. TIMER & PANELS (ADVANCED) ---
         function togglePanel(id) {
             document.querySelectorAll('.panel').forEach(p => { if(p.id !== id) p.classList.remove('active'); });
             document.getElementById(id).classList.toggle('active');
@@ -546,7 +520,7 @@
 
         function setTheme(themeName, save = true) {
             document.body.setAttribute('data-theme', themeName);
-            if(save) { dbData.theme = themeName; sync(); }
+            if(save && dbData) { dbData.theme = themeName; sync(); }
         }
 
         let timer, timeLeft = 25 * 60, isRunning = false;
@@ -584,15 +558,15 @@
             resetTimer();
             document.getElementById('breakModal').style.display = 'flex';
             document.getElementById('alarmSound').play();
-            dbData.streak++; sync(); updateUI();
+            if(dbData) { dbData.streak++; sync(); updateUI(); }
             timeLeft = 25 * 60; updateDisplay();
         }
         function closeModal() { document.getElementById('breakModal').style.display = 'none'; }
 
-        async function logout() { await supabase.auth.signOut(); location.reload(); }
+        async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
 
         // Auto-Check Session
-        supabase.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
             if (session) initApp(session.user);
         });
 
