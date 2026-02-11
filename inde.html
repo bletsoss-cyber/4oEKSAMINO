@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Uni Notes - 4ο Εξάμηνο</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary-bg: #e0eafc;
+            --gradient-1: #cfd9df;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+            --text-main: #2d3436;
+            --text-light: #636e72;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.4);
+            --card-hover: translateY(-5px);
+        }
+
+        /* Dark Mode Colors */
+        [data-theme="dark"] {
+            --primary-bg: #0f172a;
+            --gradient-1: #1e293b;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --text-main: #f1f2f6;
+            --text-light: #a4b0be;
+            --accent: #a29bfe;
+            --accent-glow: rgba(162, 155, 254, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s ease; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--gradient-1) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Background Shapes for modern look */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%; left: -10%;
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+            z-index: -1;
+            filter: blur(50px);
+        }
+
+        .container { width: 100%; max-width: 1000px; margin-top: 20px; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        .breadcrumb { font-size: 0.9rem; color: var(--text-light); font-weight: 600; }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card:hover { transform: var(--card-hover); border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        
+        .icon-box {
+            width: 50px; height: 50px;
+            background: var(--accent);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.2rem;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+
+        .card h3 { font-size: 1.2rem; margin-bottom: 5px; }
+        .card p { font-size: 0.85rem; color: var(--text-light); }
+
+        /* Buttons & Controls */
+        .btn-back {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center; gap: 8px;
+        }
+        .btn-back:hover { background: var(--accent); color: white; }
+
+        .theme-toggle {
+            background: var(--text-main);
+            color: var(--primary-bg);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Tabs inside Chapter */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.05);
+            padding: 5px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        .tab.active { background: var(--glass-bg); color: var(--accent); shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .content-box {
+            background: var(--glass-bg);
+            border: var(--glass-border);
+            padding: 30px;
+            border-radius: 24px;
+            min-height: 400px;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo">Uni<span>Notes</span></div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <span id="breadcrumb" class="breadcrumb">4ο Εξάμηνο</span>
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            </div>
+        </header>
+
+        <main id="app">
+            </main>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+        
+        // Τα δεδομένα σου
+        const subjects = [
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", chapters: [] },
+            { id: 2, title: "Εμβρυολογία", icon: "fa-baby", chapters: [] },
+            { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", chapters: [] },
+            { id: 4, title: "Οδοντική Χειρουργική II", icon: "fa-tooth", chapters: [] },
+            { id: 5, title: "Προκλινική Ενδοδοντία I", icon: "fa-notes-medical", chapters: [] },
+            { id: 6, title: "Ακτινολογία Στόματος I", icon: "fa-x-ray", chapters: [] },
+            { id: 7, title: "Προληπτική Οδοντιατρική", icon: "fa-shield-virus", chapters: [] }
+        ];
+
+        // Γεμίζουμε τα μαθήματα με 2 κεφάλαια το καθένα αυτόματα (για να μην είναι άδεια)
+        subjects.forEach(sub => {
+            sub.chapters = [
+                { 
+                    id: 1, 
+                    title: "Κεφάλαιο 1: Εισαγωγή", 
+                    theory: "<h3>Θεωρία</h3><p>Εδώ γράφεις τη θεωρία για το " + sub.title + "...</p>",
+                    notes: "<h3>Σημειώσεις</h3><p>Οι δικές μου σημειώσεις...</p>",
+                    quiz: "<h3>Quiz</h3><p>Ερώτηση 1: ...</p>" 
+                },
+                { 
+                    id: 2, 
+                    title: "Κεφάλαιο 2: Κλινική Εικόνα", 
+                    theory: "<h3>Θεωρία</h3><p>Αναλυτική θεωρία για το 2ο κεφάλαιο...</p>",
+                    notes: "<h3>Σημειώσεις</h3><p>Σημεία SOS...</p>",
+                    quiz: "<h3>Quiz</h3><p>Ερώτηση 1: ...</p>" 
+                }
+            ];
+        });
+
+        const app = document.getElementById('app');
+        const breadcrumb = document.getElementById('breadcrumb');
+
+        // 1. Εμφάνιση Μαθημάτων
+        function showSubjects() {
+            breadcrumb.innerText = "4ο Εξάμηνο";
+            let html = '<div class="grid fade-in">';
+            subjects.forEach(sub => {
+                html += `
+                <div class="card" onclick="showChapters(${sub.id})">
+                    <div class="icon-box"><i class="fas ${sub.icon}"></i></div>
+                    <h3>${sub.title}</h3>
+                    <p>${sub.chapters.length} Κεφάλαια</p>
+                </div>`;
+            });
+            html += '</div>';
+            app.innerHTML = html;
+        }
+
+        // 2. Εμφάνιση Κεφαλαίων
+        function showChapters(subjectId) {
+            const sub = subjects.find(s => s.id === subjectId);
+            breadcrumb.innerText = sub.title;
+            
+            let html = `
+                <button class="btn-back" onclick="showSubjects()"><i class="fas fa-arrow-left"></i> Πίσω</button>
+                <h2 style="margin-bottom:20px">${sub.title}</h2>
+                <div class="grid fade-in">
+            `;
+            
+            sub.chapters.forEach(chap => {
+                html += `
+                <div class="card" onclick="showContent(${sub.id}, ${chap.id})">
+                    <div class="icon-box" style="background:var(--text-light)"><i class="fas fa-book"></i></div>
+                    <h3>${chap.title}</h3>
+                    <p>Πάτησε για διάβασμα</p>
+                </div>`;
+            });
+            html += '</div>';
+            app.innerHTML = html;
+        }
+
+        // 3. Εμφάνιση Περιεχομένου (Θεωρία/Σημειώσεις/Quiz)
+        function showContent(subId, chapId) {
+            const sub = subjects.find(s => s.id === subId);
+            const chap = sub.chapters.find(c => c.id === chapId);
+            breadcrumb.innerText = `${sub.title} > ${chap.title}`;
+
+            app.innerHTML = `
+                <button class="btn-back" onclick="showChapters(${subId})"><i class="fas fa-arrow-left"></i> Πίσω στα Κεφάλαια</button>
+                <div class="fade-in">
+                    <h2 style="margin-bottom: 20px">${chap.title}</h2>
+                    
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(this, 'theory', ${subId}, ${chapId})">Θεωρία</button>
+                        <button class="tab" onclick="switchTab(this, 'notes', ${subId}, ${chapId})">Σημειώσεις</button>
+                        <button class="tab" onclick="switchTab(this, 'quiz', ${subId}, ${chapId})">Quiz</button>
+                    </div>
+
+                    <div class="content-box" id="content-display">
+                        ${chap.theory}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Αλλαγή Tab (Θεωρία / Σημειώσεις / Quiz)
+        function switchTab(btn, type, subId, chapId) {
+            // Αλλαγή active κουμπιού
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Αλλαγή περιεχομένου
+            const sub = subjects.find(s => s.id === subId);
+            const chap = sub.chapters.find(c => c.id === chapId);
+            const display = document.getElementById('content-display');
+
+            display.style.opacity = 0;
+            setTimeout(() => {
+                if(type === 'theory') display.innerHTML = chap.theory;
+                if(type === 'notes') display.innerHTML = chap.notes;
+                if(type === 'quiz') display.innerHTML = chap.quiz;
+                display.style.opacity = 1;
+            }, 200);
+        }
+
+        // Dark Mode
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        // Έναρξη
+        showSubjects();
+    </script>
+</body>
+</html>
