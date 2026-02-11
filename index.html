@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Ultimate - Themes</title>
+    <title>Uni Hub Ultimate - List View</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -137,8 +137,9 @@
         .check-circle.checked { background: var(--accent); }
         .todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
 
-        /* --- GRID CARDS --- */
+        /* --- 1. SUBJECTS GRID (Μεγάλα Κουτιά για τα Μαθήματα) --- */
         .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: slideUp 0.8s ease; }
+        
         .card {
             background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
             border-radius: 20px; cursor: pointer; position: relative; overflow: hidden;
@@ -151,11 +152,70 @@
         }
         .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--accent); }
         .card:hover::before { transform: scaleX(1); }
+        
         .icon-box {
             width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 18px;
             display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin-bottom: 15px; transition: 0.3s;
         }
         .card:hover .icon-box { background: var(--accent); color: white; transform: rotate(10deg); }
+
+
+        /* --- 2. CHAPTER LIST VIEW (ΝΕΟ: Λίστα για τα Κεφάλαια) --- */
+        .chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Απόσταση μεταξύ των κεφαλαίων */
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-dark);
+            border: var(--border);
+            padding: 15px 25px;
+            border-radius: 16px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .chapter-item:hover {
+            border-color: var(--accent);
+            transform: translateX(5px); /* Κινείται ελαφρώς δεξιά */
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .chapter-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .chapter-icon {
+            color: var(--accent);
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .chapter-arrow {
+            color: var(--text-dark);
+            opacity: 0.3;
+            transition: 0.2s;
+        }
+
+        .chapter-item:hover .chapter-arrow {
+            opacity: 1;
+            transform: translateX(5px);
+            color: var(--accent);
+        }
 
         /* --- BUTTONS (FABs) --- */
         .fab-container {
@@ -393,10 +453,10 @@
             document.getElementById('password').value = '';
         }
 
-        // --- THEME LOGIC (NEW!) ---
+        // --- THEME LOGIC ---
         function setTheme(themeName) {
             document.body.setAttribute('data-theme', themeName);
-            localStorage.setItem(`${currentUser}_theme`, themeName); // Save per user
+            localStorage.setItem(`${currentUser}_theme`, themeName);
         }
 
         function loadTheme() {
@@ -490,6 +550,7 @@
 
         function renderHome() {
             hero.style.display = 'grid';
+            // Render Subjects as GRID Cards
             let html = '<div class="grid">';
             subjects.forEach(sub => {
                 html += `
@@ -506,27 +567,38 @@
         function openSubject(id) {
             const sub = subjects.find(s => s.id === id);
             hero.style.display = 'none';
+            
+            // Header for Subject
             let html = `
             <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px; animation:slideUp 0.3s">
                 <button onclick="renderHome()" style="background:none; border:none; color:var(--text-dark); cursor:pointer; font-size:1.2rem;"><i class="fas fa-arrow-left"></i></button>
                 <h2 style="margin:0">${sub.title}</h2>
             </div>
-            <div class="grid">`;
-            if(sub.files.length === 0) html += '<p style="opacity:0.6">Δεν υπάρχουν αρχεία.</p>';
+            
+            <div class="chapter-list">`;
+            
+            if(sub.files.length === 0) html += '<p style="opacity:0.6; text-align:center">Δεν υπάρχουν αρχεία.</p>';
             else sub.files.forEach(f => {
-                html += `<div class="card" onclick="openViewer('${f.file}', '${f.name}')"><div class="icon-box"><i class="fas fa-file-alt"></i></div><h3>${f.name}</h3></div>`;
+                // Render Files as LIST Items
+                html += `
+                <div class="chapter-item" onclick="openViewer('${f.file}', '${f.name}')">
+                    <div class="chapter-info">
+                        <i class="fas fa-file-alt chapter-icon"></i>
+                        <span>${f.name}</span>
+                    </div>
+                    <i class="fas fa-chevron-right chapter-arrow"></i>
+                </div>`;
             });
             html += '</div>';
             app.innerHTML = html;
         }
 
         function openViewer(file, name) {
-            app.innerHTML = `<div class="viewer-container"><div class="mac-header"><div class="dots"><div class="dot red" onclick="renderHome()"></div><div class="dot yellow"></div><div class="dot green"></div></div><div style="opacity:0.7">${name}</div><div></div></div><iframe src="${file}"></iframe></div>`;
+            app.innerHTML = `<div class="viewer-container"><div class="mac-header"><div class="dots"><div class="dot red" onclick="openSubject(${subjects.find(s => s.files.some(f => f.name === name)).id})"></div><div class="dot yellow"></div><div class="dot green"></div></div><div style="opacity:0.7">${name}</div><div></div></div><iframe src="${file}"></iframe></div>`;
         }
 
         // --- PANELS & TIMER LOGIC ---
         function togglePanel(id) {
-            // Close other panels first
             document.querySelectorAll('.panel').forEach(p => {
                 if(p.id !== id) p.classList.remove('active');
             });
@@ -546,7 +618,6 @@
             timeLeft = minutes * 60;
             updateDisplay();
             document.getElementById('modeDesc').innerText = desc;
-            
             document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
             document.getElementById('customMin').style.display = 'none';
