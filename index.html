@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Pro - Smooth</title>
+    <title>Uni Hub Pro - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -11,11 +11,12 @@
         /* --- 1. SETUP & COLORS --- */
         :root {
             --bg-dark: #0f172a;
-            --card-dark: rgba(30, 41, 59, 0.6);
+            --card-dark: rgba(30, 41, 59, 0.7);
             --text-dark: #e2e8f0;
-            --accent: #8b5cf6; /* Violet */
+            --accent: #8b5cf6;
             --accent-glow: rgba(139, 92, 246, 0.4);
             --success: #10b981; 
+            --error: #ef4444;
             --border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -31,207 +32,255 @@
             overflow-x: hidden;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
-
-        /* --- 2. HERO SECTION (With To-Do) --- */
-        .hero {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 20px;
-            margin-bottom: 50px;
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; display: none; /* Hidden by default */ }
+        
+        /* --- LOGIN SCREEN --- */
+        .login-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(15, 23, 42, 0.95); z-index: 1000;
+            backdrop-filter: blur(10px);
         }
+        
+        .login-box {
+            background: linear-gradient(145deg, #1e1b4b, #312e81);
+            padding: 40px; border-radius: 24px; width: 350px; text-align: center;
+            border: var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .login-input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: rgba(255,255,255,0.05); border: var(--border);
+            border-radius: 12px; color: white; outline: none;
+        }
+        .login-input:focus { border-color: var(--accent); }
+        
+        .login-btn {
+            width: 100%; padding: 12px; margin-top: 20px;
+            background: var(--accent); border: none; color: white;
+            font-weight: 700; border-radius: 12px; cursor: pointer;
+            transition: 0.3s;
+        }
+        .login-btn:hover { box-shadow: 0 0 20px var(--accent-glow); }
+        
+        .toggle-text { font-size: 0.85rem; margin-top: 15px; opacity: 0.7; cursor: pointer; }
+        .toggle-text:hover { text-decoration: underline; color: var(--accent); }
+        
+        .msg-box { font-size: 0.9rem; margin-bottom: 15px; min-height: 20px; }
+        .error-msg { color: var(--error); }
+        .success-msg { color: var(--success); }
 
+        /* --- DASHBOARD STYLES (Existing) --- */
+        .hero {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 50px;
+        }
         .hero-card {
             background: linear-gradient(135deg, var(--accent), #6366f1);
-            border-radius: 24px; padding: 40px; color: white;
-            position: relative; overflow: hidden;
+            border-radius: 24px; padding: 40px; color: white; position: relative;
             box-shadow: 0 20px 40px -10px var(--accent-glow);
-            display: flex; flex-direction: column; justify-content: center;
         }
-        
-        .hero-text h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -1px; }
-        .hero-text p { opacity: 0.9; font-size: 1.1rem; }
-        
-        /* Session Counter */
         .stats-badge {
             display: inline-flex; align-items: center; gap: 10px;
             background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 20px;
-            margin-top: 20px; font-weight: 600; width: fit-content;
+            margin-top: 20px; font-weight: 600;
         }
 
-        /* To-Do Widget */
         .todo-widget {
             background: var(--card-dark); border: var(--border);
             border-radius: 24px; padding: 25px; backdrop-filter: blur(12px);
-            display: flex; flex-direction: column;
         }
-        .todo-header { font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        
         .todo-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .todo-input {
-            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px; color: white; padding: 8px; outline: none;
-        }
+        .todo-input { flex: 1; background: rgba(255,255,255,0.05); border: var(--border); border-radius: 8px; color: white; padding: 8px; }
         .todo-btn { background: var(--accent); border: none; color: white; border-radius: 8px; width: 35px; cursor: pointer; }
-        
-        .todo-list { list-style: none; padding: 0; overflow-y: auto; max-height: 150px; }
-        .todo-item {
-            display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); animation: fadeIn 0.3s;
-        }
-        .todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
-        .check-circle {
-            width: 18px; height: 18px; border: 2px solid var(--accent); border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
+        .todo-list { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; }
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .check-circle { width: 18px; height: 18px; border: 2px solid var(--accent); border-radius: 50%; cursor: pointer; }
         .check-circle.checked { background: var(--accent); }
+        .todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
 
-        /* --- 3. GRID SYSTEM --- */
         .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: slideUp 0.8s ease; }
         .card {
             background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
-            border-radius: 20px; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(12px); display: flex; flex-direction: column; align-items: center; text-align: center;
+            border-radius: 20px; cursor: pointer; transition: 0.3s; text-align: center;
         }
-        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3); }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); }
+        
         .icon-box {
             width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 18px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin-bottom: 15px;
-            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin: 0 auto 15px;
         }
-        .card:hover .icon-box { background: var(--accent); color: white; transform: rotate(10deg); }
 
-        /* --- 4. VIEWER --- */
-        .viewer-container {
-            background: var(--card-dark); border: var(--border); border-radius: 20px; overflow: hidden;
-            height: 80vh; display: flex; flex-direction: column; animation: slideUp 0.5s ease;
-        }
+        /* Viewer */
+        .viewer-container { background: var(--card-dark); border: var(--border); border-radius: 20px; height: 80vh; display: flex; flex-direction: column; }
         .mac-header { padding: 12px 20px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
-        .dots { display: flex; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+        .dots { display: flex; gap: 8px; } .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
         .red { background: #ff5f57; } .yellow { background: #febc2e; } .green { background: #28c840; }
         iframe { flex: 1; width: 100%; border: none; background: white; }
 
-        /* --- 5. TIMER & MODAL --- */
-        .fab {
-            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-            background: var(--accent); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
-            cursor: pointer; box-shadow: 0 10px 30px var(--accent-glow); z-index: 100;
-            transition: transform 0.2s;
+        /* Logout Btn */
+        .logout-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1); border: none; color: white;
+            padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;
         }
-        .fab:hover { transform: scale(1.1) rotate(90deg); }
+        .logout-btn:hover { background: #ef4444; }
 
-        .timer-panel {
-            position: fixed; bottom: 100px; right: 30px; width: 320px;
-            background: #1e1b4b; border: 1px solid var(--accent);
-            border-radius: 24px; padding: 25px; z-index: 99; display: none;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7); animation: slideUp 0.3s;
-        }
-        .timer-panel.active { display: block; }
-        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; letter-spacing: -2px; margin: 10px 0; }
-        .btn-action { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        .btn-start { background: linear-gradient(90deg, var(--accent), #6366f1); color: white; }
-        
-        /* SMOOTH MODAL STYLES */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
-            z-index: 200; display: none; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 0.4s ease;
-        }
-        .modal-overlay.show { opacity: 1; }
-        
-        .modal-content {
-            background: linear-gradient(145deg, #2e1065, #1e1b4b);
-            padding: 40px; border-radius: 30px; text-align: center; max-width: 400px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        .modal-overlay.show .modal-content { transform: scale(1); }
-        
-        .modal-icon {
-            font-size: 4rem; margin-bottom: 20px;
-            background: -webkit-linear-gradient(#f472b6, #8b5cf6);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: bounce 2s infinite;
-        }
-
-        /* Confetti */
-        .confetti {
-            position: fixed; width: 10px; height: 10px; background-color: #f0f;
-            animation: fall linear forwards; z-index: 199;
-        }
-        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="hero-section" class="hero">
+    <div id="loginScreen" class="login-wrapper">
+        <div class="login-box">
+            <div style="font-size:3rem; color:var(--accent); margin-bottom:10px"><i class="fas fa-user-astronaut"></i></div>
+            <h2 id="formTitle">Καλωσόρισες</h2>
+            <div id="loginMsg" class="msg-box"></div>
             
+            <input type="text" id="username" class="login-input" placeholder="Όνομα Χρήστη">
+            <input type="password" id="password" class="login-input" placeholder="Κωδικός">
+            
+            <button class="login-btn" onclick="handleAuth()">Σύνδεση</button>
+            
+            <div class="toggle-text" onclick="toggleAuthMode()">
+                <span id="toggleText">Νέος εδώ; Δημιούργησε λογαριασμό</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainContainer" class="container">
+        
+        <div id="hero-section" class="hero">
             <div class="hero-card">
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Έξοδος</button>
                 <div class="hero-text">
                     <h1 id="greeting">Καλησπέρα!</h1>
-                    <p>Η ιατρική θέλει υπομονή. Πάμε γερά.</p>
+                    <p>Η πρόοδός σου είναι αποθηκευμένη.</p>
                 </div>
                 <div class="stats-badge">
                     <i class="fas fa-fire" style="color:#fcd34d"></i>
-                    <span id="sessionCount">0</span> Συνεδρίες Σήμερα
+                    <span id="sessionCount">0</span> Συνεδρίες (Streak)
                 </div>
-                <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:white; opacity:0.1; border-radius:50%"></div>
             </div>
 
             <div class="todo-widget">
-                <div class="todo-header">
-                    <span>Στόχοι Σήμερα</span>
-                    <i class="fas fa-tasks" style="opacity:0.6"></i>
-                </div>
+                <div style="font-weight:700; margin-bottom:15px">My Tasks</div>
                 <div class="todo-input-group">
-                    <input type="text" id="todoInput" class="todo-input" placeholder="π.χ. Κεφάλαιο 3...">
+                    <input type="text" id="todoInput" class="todo-input" placeholder="Νέος στόχος...">
                     <button class="todo-btn" onclick="addTodo()"><i class="fas fa-plus"></i></button>
                 </div>
-                <ul class="todo-list" id="todoList">
-                    </ul>
+                <ul class="todo-list" id="todoList"></ul>
             </div>
         </div>
 
         <main id="app"></main>
     </div>
 
-    <div class="fab" onclick="toggleTimerPanel()">
-        <i class="fas fa-hourglass-half"></i>
-    </div>
-
-    <div class="timer-panel" id="timerPanel">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px">
-            <h3>Focus Timer</h3>
-            <i class="fas fa-times" style="cursor:pointer; opacity:0.6" onclick="toggleTimerPanel()"></i>
-        </div>
-        
-        <div style="display:flex; gap:10px; justify-content:center; margin-bottom:10px">
-            <button onclick="setTime(25)" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; cursor:pointer">25'</button>
-            <button onclick="setTime(50)" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; cursor:pointer">50'</button>
-        </div>
-
-        <div class="timer-display" id="timeDisplay">25:00</div>
-        <button class="btn-action btn-start" onclick="startTimer()" id="startBtn">Έναρξη</button>
-    </div>
-
-    <div class="modal-overlay" id="smoothModal">
-        <div class="modal-content">
-            <div class="modal-icon"><i class="fas fa-trophy"></i></div>
-            <h2 style="font-size:1.8rem; margin-bottom:10px">Συνεδρία Ολοκληρώθηκε!</h2>
-            <p style="opacity:0.8; margin-bottom:25px">Ο εγκέφαλός σου μόλις δυνάμωσε. Ώρα για ένα μικρό διάλειμμα.</p>
-            <button class="btn-action btn-start" onclick="closeModal()">Συνέχεια</button>
-        </div>
-    </div>
-
-    <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
-
     <script>
-        // --- DATA ---
+        // --- AUTHENTICATION LOGIC ---
+        let isLoginMode = true;
+        let currentUser = null;
+
+        // Load users from LocalStorage
+        function getUsersDB() {
+            const users = localStorage.getItem('uni_users');
+            return users ? JSON.parse(users) : {};
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('formTitle').innerText = isLoginMode ? 'Σύνδεση' : 'Εγγραφή';
+            document.querySelector('.login-btn').innerText = isLoginMode ? 'Σύνδεση' : 'Δημιουργία';
+            document.getElementById('toggleText').innerText = isLoginMode ? 'Νέος εδώ; Δημιούργησε λογαριασμό' : 'Έχεις λογαριασμό; Συνδέσου';
+            document.getElementById('loginMsg').innerText = '';
+        }
+
+        function handleAuth() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const msg = document.getElementById('loginMsg');
+            const db = getUsersDB();
+
+            if(!user || !pass) {
+                msg.innerText = "Συμπλήρωσε όλα τα πεδία.";
+                msg.className = "msg-box error-msg";
+                return;
+            }
+
+            if (isLoginMode) {
+                // LOGIN
+                if (db[user] && db[user] === pass) {
+                    loginSuccess(user);
+                } else {
+                    msg.innerText = "Λάθος όνομα ή κωδικός.";
+                    msg.className = "msg-box error-msg";
+                }
+            } else {
+                // REGISTER
+                if (db[user]) {
+                    msg.innerText = "Το όνομα υπάρχει ήδη.";
+                    msg.className = "msg-box error-msg";
+                } else {
+                    db[user] = pass;
+                    localStorage.setItem('uni_users', JSON.stringify(db));
+                    msg.innerText = "Επιτυχία! Τώρα κάνε σύνδεση.";
+                    msg.className = "msg-box success-msg";
+                    setTimeout(toggleAuthMode, 1500);
+                }
+            }
+        }
+
+        function loginSuccess(user) {
+            currentUser = user;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            
+            // Personalize Greeting
+            const h = new Date().getHours();
+            const greet = h < 12 ? "Καλημέρα" : h > 19 ? "Καληνύχτα" : "Καλησπέρα";
+            document.getElementById('greeting').innerText = `${greet}, ${user}!`;
+
+            // Load User Data
+            loadUserData();
+            renderHome();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginMsg').innerText = '';
+        }
+
+        // --- DATA MANAGEMENT (Per User) ---
+        function loadUserData() {
+            // Load Todos
+            const savedTodos = localStorage.getItem(`${currentUser}_todos`);
+            const list = document.getElementById('todoList');
+            list.innerHTML = ''; // Clear previous
+            if (savedTodos) {
+                const todos = JSON.parse(savedTodos);
+                todos.forEach(t => createTodoElement(t.text, t.completed));
+            }
+
+            // Load Streak
+            const savedStreak = localStorage.getItem(`${currentUser}_streak`);
+            document.getElementById('sessionCount').innerText = savedStreak || 0;
+        }
+
+        function saveTodos() {
+            const items = [];
+            document.querySelectorAll('.todo-item').forEach(el => {
+                items.push({
+                    text: el.querySelector('span').innerText,
+                    completed: el.classList.contains('completed')
+                });
+            });
+            localStorage.setItem(`${currentUser}_todos`, JSON.stringify(items));
+        }
+
+        // --- APP LOGIC (Previous) ---
         const subjects = [
             { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "anatomy1.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [] },
@@ -244,9 +293,7 @@
 
         const app = document.getElementById('app');
         const hero = document.getElementById('hero-section');
-        let completedSessions = 0;
 
-        // --- RENDER FUNCTIONS ---
         function renderHome() {
             hero.style.display = 'grid';
             let html = '<div class="grid">';
@@ -297,106 +344,47 @@
                 </div>`;
         }
 
-        // --- TIMER & SMOOTH MODAL LOGIC ---
-        let timer;
-        let timeLeft = 25 * 60;
-        let isRunning = false;
-
-        function toggleTimerPanel() {
-            document.getElementById('timerPanel').classList.toggle('active');
-        }
-
-        function setTime(min) {
-            if(isRunning) return;
-            timeLeft = min * 60;
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const s = (timeLeft % 60).toString().padStart(2, '0');
-            document.getElementById('timeDisplay').innerText = `${m}:${s}`;
-        }
-
-        function startTimer() {
-            if(isRunning) return;
-            isRunning = true;
-            document.getElementById('startBtn').innerText = "Running...";
-            timer = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-                if(timeLeft <= 0) timeUp();
-            }, 1000);
-        }
-
-        function timeUp() {
-            clearInterval(timer);
-            isRunning = false;
-            document.getElementById('startBtn').innerText = "Έναρξη";
-            
-            // Show Smooth Modal
-            const modal = document.getElementById('smoothModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10); // Trigger CSS transition
-            
-            document.getElementById('alarmSound').play();
-            fireConfetti();
-            
-            // Update Stats
-            completedSessions++;
-            document.getElementById('sessionCount').innerText = completedSessions;
-            
-            timeLeft = 25 * 60; updateDisplay();
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('smoothModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 400); // Wait for transition
-        }
-
-        // --- CONFETTI EFFECT ---
-        function fireConfetti() {
-            const colors = ['#f472b6', '#8b5cf6', '#22d3ee', '#facc15'];
-            for(let i=0; i<50; i++) {
-                const conf = document.createElement('div');
-                conf.classList.add('confetti');
-                conf.style.left = Math.random() * 100 + 'vw';
-                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                document.body.appendChild(conf);
-                setTimeout(() => conf.remove(), 5000);
-            }
-        }
-
-        // --- TO-DO LIST LOGIC ---
+        // --- TODO LOGIC ---
         function addTodo() {
             const input = document.getElementById('todoInput');
             const val = input.value.trim();
             if(!val) return;
-            
+            createTodoElement(val, false);
+            saveTodos(); // Save to User Profile
+            input.value = '';
+        }
+
+        function createTodoElement(text, completed) {
             const li = document.createElement('li');
-            li.className = 'todo-item';
+            li.className = `todo-item ${completed ? 'completed' : ''}`;
             li.innerHTML = `
-                <div class="check-circle" onclick="toggleTask(this)"></div>
-                <span>${val}</span>
-                <i class="fas fa-trash" style="margin-left:auto; cursor:pointer; opacity:0.5" onclick="this.parentElement.remove()"></i>
+                <div class="check-circle ${completed ? 'checked' : ''}" onclick="toggleTask(this)"></div>
+                <span>${text}</span>
+                <i class="fas fa-trash" style="margin-left:auto; cursor:pointer; opacity:0.5" onclick="deleteTask(this)"></i>
             `;
             document.getElementById('todoList').appendChild(li);
-            input.value = '';
         }
 
         function toggleTask(el) {
             el.classList.toggle('checked');
             el.parentElement.classList.toggle('completed');
+            saveTodos();
         }
 
-        // Initial Render
-        renderHome();
-        
-        // Time Greeting
-        const hour = new Date().getHours();
-        document.getElementById('greeting').innerText = (hour<12 ? "Καλημέρα" : hour>19 ? "Καληνύχτα" : "Καλησπέρα") + ", Doc!";
+        function deleteTask(el) {
+            el.parentElement.remove();
+            saveTodos();
+        }
+
+        // --- SESSION LOGIC ---
+        // Κάλεσε αυτή τη συνάρτηση όταν τελειώνει το χρονόμετρο (που είχαμε πριν)
+        function incrementSession() {
+            if(!currentUser) return;
+            let count = parseInt(localStorage.getItem(`${currentUser}_streak`) || 0);
+            count++;
+            localStorage.setItem(`${currentUser}_streak`, count);
+            document.getElementById('sessionCount').innerText = count;
+        }
 
     </script>
 </body>
