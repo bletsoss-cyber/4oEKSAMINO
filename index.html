@@ -3,120 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniNotes Hub</title>
+    <title>Uni Hub Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- DESIGN & SYMMETRY --- */
+        /* --- 1. SETUP & COLORS --- */
         :root {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --glass: rgba(255, 255, 255, 0.7);
-            --border: 1px solid rgba(255, 255, 255, 0.4);
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            --text: #2d3436;
-            --accent: #6c5ce7;
-        }
-
-        [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --glass: rgba(30, 41, 59, 0.8);
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #6366f1; /* Indigo */
+            --accent-glow: rgba(99, 102, 241, 0.5);
             --border: 1px solid rgba(255, 255, 255, 0.1);
-            --text: #e2e8f0;
-            --accent: #a29bfe;
+            --gradient-bg: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; margin: 0; padding: 0; }
-        
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #4f46e5;
+            --accent-glow: rgba(79, 70, 229, 0.3);
+            --border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: 'Inter', sans-serif; }
+
         body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--bg-gradient);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             min-height: 100vh;
-            color: var(--text);
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%), 
+                              radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 25%);
         }
 
-        .container { width: 100%; max-width: 1200px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
 
-        /* Header */
+        /* --- 2. HEADER & SEARCH --- */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--glass); backdrop-filter: blur(10px);
-            padding: 20px 30px; border-radius: 20px;
-            border: var(--border); box-shadow: var(--shadow);
-            margin-bottom: 40px;
+            margin-bottom: 50px; flex-wrap: wrap; gap: 20px;
         }
-        .logo { font-weight: 700; font-size: 1.5rem; }
-        .logo span { color: var(--accent); }
 
-        /* --- SYMMETRICAL LAYOUT (FLEXBOX) --- */
-        .grid-wrapper {
+        .logo h1 { font-weight: 900; font-size: 2rem; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        .logo p { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 12px;
+            border: var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            backdrop-filter: blur(10px);
+            outline: none;
+        }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        /* --- 3. CARDS (The "Symmetrical" Grid) --- */
+        .grid {
             display: flex;
-            flex-wrap: wrap;       /* Επιτρέπει στα κουτάκια να κατεβαίνουν γραμμή */
-            justify-content: center; /* ΤΑ ΚΕΝΤΡΑΡΕΙ ΑΠΟΛΥΤΑ */
-            gap: 30px;             /* Απόσταση μεταξύ τους */
+            flex-wrap: wrap;
+            justify-content: center; /* Symmetry Key */
+            gap: 25px;
         }
 
         .card {
-            width: 300px;          /* Σταθερό πλάτος για συμμετρία */
-            background: var(--glass);
-            border: var(--border);
-            border-radius: 24px;
-            padding: 30px;
-            cursor: pointer;
-            text-align: center;    /* Κεντραρισμένο κείμενο */
-            display: flex; flex-direction: column; align-items: center;
-            box-shadow: var(--shadow);
-        }
-
-        .card:hover { transform: translateY(-10px); border-color: var(--accent); }
-        
-        .icon-circle {
-            width: 60px; height: 60px;
-            background: var(--accent); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 1.5rem; margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
-        }
-
-        /* --- IFRAME VIEWER (Η Οθόνη για τα αρχεία σου) --- */
-        .viewer-container {
-            width: 100%;
-            height: 80vh; /* 80% του ύψους της οθόνης */
-            background: white;
+            background: var(--card-bg);
+            width: 260px; /* Fixed width for perfect symmetry */
+            padding: 30px 20px;
             border-radius: 20px;
+            border: var(--border);
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+            text-align: center;
+            position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.5s;
         }
 
-        iframe {
-            width: 100%; height: 100%; border: none;
+        /* Hover Effects */
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3);
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+        }
+        .card:hover::before { transform: scaleX(1); }
+
+        .icon-box {
+            width: 60px; height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white;
+            box-shadow: 0 8px 16px var(--accent-glow);
         }
 
-        .back-btn {
-            background: var(--glass); border: var(--border); color: var(--text);
-            padding: 10px 20px; border-radius: 12px; cursor: pointer;
-            margin-bottom: 20px; display: inline-flex; align-items: center; gap: 10px; font-weight: 600;
-        }
-        .back-btn:hover { background: var(--accent); color: white; }
+        .card h3 { font-size: 1.1rem; margin-bottom: 8px; font-weight: 700; }
+        .card p { font-size: 0.85rem; color: var(--text-muted); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Dark Mode Button */
-        .theme-btn { background: none; border: none; color: var(--text); cursor: pointer; font-size: 1.2rem; }
+        /* --- 4. VIEWER (Mac Style Window) --- */
+        .viewer-wrapper {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+            height: 80vh;
+            display: flex; flex-direction: column;
+        }
+
+        .mac-header {
+            background: rgba(0,0,0,0.2);
+            padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: var(--border);
+        }
+
+        .window-controls { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+
+        .window-title { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+
+        .action-btn {
+            background: none; border: 1px solid var(--text-muted); color: var(--text-main);
+            padding: 5px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+        }
+        .action-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+
+        iframe { flex: 1; width: 100%; border: none; background: white; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Floating Theme Toggle */
+        .theme-toggle {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 50px; height: 50px;
+            background: var(--accent); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 10px 25px var(--accent-glow); z-index: 100;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="container">
         <header>
-            <div class="logo">Medical<span>Notes</span></div>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <span id="location-text" style="opacity:0.6; font-size:0.9rem;">4ο Εξάμηνο</span>
-                <button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            <div class="logo">
+                <h1>Uni<span>Hub</span></h1>
+                <p id="location-indicator">4ο Εξάμηνο • Ιατρική</p>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Αναζήτηση μαθήματος..." onkeyup="filterSubjects()">
             </div>
         </header>
 
@@ -124,110 +183,129 @@
             </main>
     </div>
 
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-adjust"></i>
+    </div>
+
     <script>
-        // --- ΡΥΘΜΙΣΕΙΣ & ΔΕΔΟΜΕΝΑ ---
-        
-        // ΕΔΩ ΟΡΙΖΕΙΣ ΤΑ ΑΡΧΕΙΑ ΣΟΥ (HTML FILES)
-        // Στο 'file' βάζεις το όνομα του αρχείου που έφτιαξες (π.χ. 'notes/anatomy1.html')
+        // --- DATA ---
+        // Εδώ βάζεις τα HTML αρχεία σου στο πεδίο 'file'
         const subjects = [
             { 
-                id: 1, title: "Ανατομία III", icon: "fa-skull",
-                chapters: [
-                    { title: "Κεφάλαιο 1: Εισαγωγή", file: "anatomy_ch1.html" }, 
-                    { title: "Κεφάλαιο 2: Νευρικό", file: "anatomy_ch2.html" }
+                id: 1, title: "Ανατομία III", icon: "fa-skull", category: "Βασικό",
+                files: [
+                    { name: "Κεφ. 1: Εισαγωγή", path: "anatomy_1.html" },
+                    { name: "Κεφ. 2: Νευρικό", path: "anatomy_2.html" }
                 ]
             },
             { 
-                id: 2, title: "Εμβρυολογία", icon: "fa-baby",
-                chapters: [
-                    { title: "Κεφάλαιο 1: Γονιμοποίηση", file: "embryo_ch1.html" }
-                ]
+                id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", category: "Βιολογία",
+                files: [ { name: "Γονιμοποίηση", path: "embryo_1.html" } ]
             },
-            { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", chapters: [] },
-            { id: 4, title: "Οδοντική Χειρουργική II", icon: "fa-tooth", chapters: [] },
-            { id: 5, title: "Προκλινική Ενδοδοντία I", icon: "fa-notes-medical", chapters: [] },
-            { id: 6, title: "Ακτινολογία Στόματος I", icon: "fa-x-ray", chapters: [] },
-            { id: 7, title: "Προληπτική Οδοντιατρική", icon: "fa-shield-virus", chapters: [] }
+            { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", category: "Βιολογία", files: [] },
+            { id: 4, title: "Οδοντική Χειρουργική", icon: "fa-tooth", category: "Κλινική", files: [] },
+            { id: 5, title: "Προκλινική Ενδοδοντία", icon: "fa-notes-medical", category: "Εργαστήριο", files: [] },
+            { id: 6, title: "Ακτινολογία Στόματος", icon: "fa-x-ray", category: "Απεικόνιση", files: [] },
+            { id: 7, title: "Προληπτική", icon: "fa-shield-virus", category: "Κλινική", files: [] }
         ];
 
         const app = document.getElementById('app');
-        const locationText = document.getElementById('location-text');
+        const loc = document.getElementById('location-indicator');
 
-        // 1. Εμφάνιση Μαθημάτων (Συμμετρικό Grid)
-        function showSubjects() {
-            locationText.innerText = "4ο Εξάμηνο";
-            let html = '<div class="grid-wrapper fade-in">';
+        // 1. SHOW SUBJECTS (Grid)
+        function renderHome() {
+            loc.innerText = "4ο Εξάμηνο • Ιατρική";
+            document.querySelector('.search-box').style.display = 'block'; // Show search
+            
+            let html = `<div class="grid" id="gridContainer">`;
             
             subjects.forEach(sub => {
                 html += `
-                <div class="card" onclick="showChapters(${sub.id})">
-                    <div class="icon-circle"><i class="fas ${sub.icon}"></i></div>
+                <div class="card subject-card" onclick="openSubject(${sub.id})">
+                    <div class="icon-box"><i class="fas ${sub.icon}"></i></div>
                     <h3>${sub.title}</h3>
-                    <p style="margin-top:5px; opacity:0.7">${sub.chapters.length} Αρχεία</p>
+                    <p>${sub.files.length} Αρχεία • ${sub.category}</p>
                 </div>`;
             });
             
-            html += '</div>';
+            html += `</div>`;
             app.innerHTML = html;
         }
 
-        // 2. Εμφάνιση Λίστας Αρχείων (Κεφάλαια)
-        function showChapters(id) {
+        // 2. SHOW FILES (List within Subject)
+        function openSubject(id) {
             const sub = subjects.find(s => s.id === id);
-            locationText.innerText = sub.title;
+            loc.innerText = `4ο Εξάμηνο > ${sub.title}`;
+            document.querySelector('.search-box').style.display = 'none'; // Hide search
             
             let html = `
-                <button class="back-btn" onclick="showSubjects()">
-                    <i class="fas fa-arrow-left"></i> Πίσω στα Μαθήματα
-                </button>
-                <h2 style="text-align:center; margin-bottom:30px">Επίλεξε Αρχείο</h2>
-                <div class="grid-wrapper fade-in">
-            `;
-
-            if(sub.chapters.length === 0) {
-                html += `<p>Δεν έχουν προστεθεί αρχεία ακόμα.</p>`;
+            <button class="action-btn" onclick="renderHome()" style="margin-bottom:20px">
+                <i class="fas fa-arrow-left"></i> Πίσω
+            </button>
+            <div class="grid">`;
+            
+            if(sub.files.length === 0) {
+                html += `<div style="text-align:center; width:100%; color:var(--text-muted)">Δεν υπάρχουν αρχεία ακόμα.</div>`;
             } else {
-                sub.chapters.forEach(chap => {
-                    // Περνάμε το όνομα του αρχείου (chap.file) στη συνάρτηση
+                sub.files.forEach(file => {
                     html += `
-                    <div class="card" onclick="openFile('${chap.file}', '${sub.title}')">
-                        <div class="icon-circle" style="background:#0984e3"><i class="fas fa-file-code"></i></div>
-                        <h3>${chap.title}</h3>
-                        <p>Άνοιγμα Αρχείου</p>
+                    <div class="card" onclick="openViewer('${file.path}', '${file.name}')">
+                        <div class="icon-box" style="background:var(--text-muted)"><i class="fas fa-file-code"></i></div>
+                        <h3>${file.name}</h3>
+                        <p>Άνοιγμα</p>
                     </div>`;
                 });
             }
-            
-            html += '</div>';
+            html += `</div>`;
             app.innerHTML = html;
         }
 
-        // 3. ΤΟ ΣΗΜΑΝΤΙΚΟ: Iframe Viewer
-        function openFile(filename, subjectTitle) {
-            locationText.innerText = subjectTitle + " / Προβολή";
+        // 3. VIEWER (The "Mac Window")
+        function openViewer(filePath, fileName) {
+            loc.innerText = `Προβολή > ${fileName}`;
             
-            // Ελέγχουμε αν υπάρχει όνομα αρχείου
-            if(!filename) { alert("Δεν έχει οριστεί αρχείο HTML!"); return; }
+            if(!filePath) { alert("Δεν έχει οριστεί αρχείο!"); return; }
 
             app.innerHTML = `
-                <button class="back-btn" onclick="showSubjects()">
-                    <i class="fas fa-home"></i> Αρχική
-                </button>
-                
-                <div class="viewer-container fade-in">
-                    <iframe src="${filename}" title="Viewer"></iframe>
+                <div class="viewer-wrapper">
+                    <div class="mac-header">
+                        <div class="window-controls">
+                            <div class="dot red" onclick="renderHome()" style="cursor:pointer" title="Κλείσιμο"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                        <div class="window-title">${fileName}</div>
+                        <button class="action-btn" onclick="openSubject(${subjects.find(s => s.files.some(f => f.path === filePath)).id})">Πίσω</button>
+                    </div>
+                    <iframe src="${filePath}"></iframe>
                 </div>
             `;
         }
 
-        // Dark Mode
-        function toggleTheme() {
-            const body = document.body;
-            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        // Search Functionality
+        function filterSubjects() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.subject-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                if(title.includes(input)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
         }
 
-        // Start
-        showSubjects();
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+        }
+
+        // Init
+        renderHome();
     </script>
 </body>
 </html>
