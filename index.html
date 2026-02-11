@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STUDY - List View</title>
+    <title>Uni Hub Ultimate - Cloud Edition</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -137,9 +139,8 @@
         .check-circle.checked { background: var(--accent); }
         .todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
 
-        /* --- 1. SUBJECTS GRID (Μεγάλα Κουτιά για τα Μαθήματα) --- */
+        /* --- GRID CARDS --- */
         .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: slideUp 0.8s ease; }
-        
         .card {
             background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
             border-radius: 20px; cursor: pointer; position: relative; overflow: hidden;
@@ -152,76 +153,34 @@
         }
         .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--accent); }
         .card:hover::before { transform: scaleX(1); }
-        
         .icon-box {
             width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 18px;
             display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin-bottom: 15px; transition: 0.3s;
         }
         .card:hover .icon-box { background: var(--accent); color: white; transform: rotate(10deg); }
 
-
-        /* --- 2. CHAPTER LIST VIEW (ΝΕΟ: Λίστα για τα Κεφάλαια) --- */
+        /* --- CHAPTER LIST VIEW --- */
         .chapter-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px; /* Απόσταση μεταξύ των κεφαλαίων */
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            animation: fadeIn 0.5s ease;
+            display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 800px; margin: 0 auto; animation: fadeIn 0.5s ease;
         }
-
         .chapter-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--card-dark);
-            border: var(--border);
-            padding: 15px 25px;
-            border-radius: 16px;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--card-dark); border: var(--border); padding: 15px 25px;
+            border-radius: 16px; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.2s ease;
         }
-
         .chapter-item:hover {
-            border-color: var(--accent);
-            transform: translateX(5px); /* Κινείται ελαφρώς δεξιά */
-            background: rgba(255,255,255,0.08);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-color: var(--accent); transform: translateX(5px);
+            background: rgba(255,255,255,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
-        .chapter-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        .chapter-icon {
-            color: var(--accent);
-            opacity: 0.8;
-            font-size: 1.1rem;
-        }
-
-        .chapter-arrow {
-            color: var(--text-dark);
-            opacity: 0.3;
-            transition: 0.2s;
-        }
-
-        .chapter-item:hover .chapter-arrow {
-            opacity: 1;
-            transform: translateX(5px);
-            color: var(--accent);
-        }
+        .chapter-info { display: flex; align-items: center; gap: 15px; font-weight: 500; font-size: 1rem; }
+        .chapter-icon { color: var(--accent); opacity: 0.8; font-size: 1.1rem; }
+        .chapter-arrow { color: var(--text-dark); opacity: 0.3; transition: 0.2s; }
+        .chapter-item:hover .chapter-arrow { opacity: 1; transform: translateX(5px); color: var(--accent); }
 
         /* --- BUTTONS (FABs) --- */
         .fab-container {
             position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 100;
         }
-        
         .fab {
             width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
@@ -241,16 +200,11 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.7); animation: slideUp 0.3s;
         }
         .panel.active { display: block; }
-
-        /* Theme Grid */
+        
         .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-        .theme-btn {
-            height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: 0.2s;
-        }
+        .theme-btn { height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
         .theme-btn:hover { transform: scale(1.05); }
-        .theme-btn.active { border-color: white; transform: scale(1.1); }
 
-        /* Timer Styles */
         .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; letter-spacing: -2px; margin: 5px 0; }
         .modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .btn-mode {
@@ -278,8 +232,6 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes bounceIn { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
     </style>
 </head>
 <body>
@@ -287,13 +239,13 @@
     <div id="loginScreen" class="login-wrapper">
         <div class="login-box">
             <div style="font-size:3rem; color:var(--accent); margin-bottom:10px"><i class="fas fa-brain"></i></div>
-            <h2 id="formTitle">Καλωσόρισες</h2>
+            <h2 id="authTitle">Uni Hub Cloud</h2>
             <div id="loginMsg" class="msg-box"></div>
-            <input type="text" id="username" class="login-input" placeholder="Όνομα Χρήστη">
-            <input type="password" id="password" class="login-input" placeholder="Κωδικός">
-            <button class="login-btn" onclick="handleAuth()">Σύνδεση</button>
+            <input type="email" id="email" class="login-input" placeholder="Email">
+            <input type="password" id="pass" class="login-input" placeholder="Κωδικός">
+            <button class="login-btn" onclick="handleAuth()" id="authBtn">Είσοδος</button>
             <div class="toggle-text" onclick="toggleAuthMode()">
-                <span id="toggleText">Νέος εδώ; Δημιουργία προφιλ</span>
+                <span id="toggleText">Νέος εδώ; Δημιουργία λογαριασμού</span>
             </div>
         </div>
     </div>
@@ -303,7 +255,7 @@
             <div class="hero-card">
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Έξοδος</button>
                 <div style="margin-top:10px">
-                    <h1 id="greeting">Καλημερα!</h1>
+                    <h1 id="greeting">Καλησπέρα!</h1>
                     <p>Ώρα για διάβασμα.</p>
                 </div>
                 <div style="display:inline-flex; align-items:center; gap:10px; background:rgba(0,0,0,0.2); padding:8px 15px; border-radius:20px; margin-top:20px; font-weight:600">
@@ -372,8 +324,6 @@
             <h3>Επίλεξε Θέμα</h3>
             <i class="fas fa-times" style="cursor:pointer; opacity:0.6" onclick="closePanels()"></i>
         </div>
-        <p style="font-size:0.9rem; opacity:0.7; margin-bottom:15px">Διάλεξε το χρώμα που σε εμπνέει.</p>
-        
         <div class="theme-grid">
             <div class="theme-btn" style="background: #8b5cf6;" onclick="setTheme('default')" title="Royal Purple"></div>
             <div class="theme-btn" style="background: #3b82f6;" onclick="setTheme('ocean')" title="Ocean Blue"></div>
@@ -386,8 +336,8 @@
     <div class="modal-overlay" id="breakModal">
         <div class="modal-content">
             <div style="font-size:3rem; color:var(--success); margin-bottom:15px"><i class="fas fa-trophy"></i></div>
-            <h2>Συνεδρία Τέλος bro!</h2>
-            <p style="margin-bottom:25px; opacity:0.8">Μπράβο bro! Κάνε ένα διάλειμμα.</p>
+            <h2>Συνεδρία Τέλος!</h2>
+            <p style="margin-bottom:25px; opacity:0.8">Μπράβο! Κάνε ένα διάλειμμα.</p>
             <button class="btn-action btn-start" onclick="closeModal()">Συνέχεια</button>
         </div>
     </div>
@@ -395,117 +345,87 @@
     <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
 
     <script>
-        // --- AUTH & DATA ---
-        let currentUser = null;
+        // --- 1. SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let isLoginMode = true;
+        let dbData = null;
 
-        function getUsers() { return JSON.parse(localStorage.getItem('uni_users') || '{}'); }
-        
-        function handleAuth() {
-            const u = document.getElementById('username').value.trim();
-            const p = document.getElementById('password').value.trim();
+        // --- 2. AUTH LOGIC ---
+        async function handleAuth() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('pass').value.trim();
             const msg = document.getElementById('loginMsg');
-            const db = getUsers();
+            
+            if(!email || !password) return alert("Συμπλήρωσε τα πεδία.");
 
-            if(!u || !p) { msg.innerText = "Συμπλήρωσε τα πεδία"; msg.className="msg-box error-msg"; return; }
-
-            if(isLoginMode) {
-                if(db[u] === p) loginSuccess(u);
-                else { msg.innerText = "Λάθος στοιχεία"; msg.className="msg-box error-msg"; }
-            } else {
-                if(db[u]) { msg.innerText = "Το όνομα υπάρχει"; msg.className="msg-box error-msg"; }
-                else {
-                    db[u] = p; localStorage.setItem('uni_users', JSON.stringify(db));
-                    msg.innerText = "Επιτυχία! Συνδέσου."; msg.className="msg-box success-msg";
-                    setTimeout(toggleAuthMode, 1500);
+            try {
+                if(isLoginMode) {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if(error) throw error;
+                } else {
+                    const { error } = await supabase.auth.signUp({ email, password });
+                    if(error) throw error;
+                    alert("Επιτυχία! Τώρα κάνε σύνδεση.");
+                    toggleAuthMode();
                 }
+            } catch(e) {
+                msg.innerText = e.message;
+                msg.className = "msg-box error-msg";
             }
         }
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
-            document.getElementById('formTitle').innerText = isLoginMode ? 'Σύνδεση' : 'Εγγραφή';
-            document.querySelector('.login-btn').innerText = isLoginMode ? 'Σύνδεση' : 'Δημιουργία';
-            document.getElementById('toggleText').innerText = isLoginMode ? 'Νέος; Εγγραφή' : 'Έχεις λογαριασμό; Login';
-            document.getElementById('loginMsg').innerText = '';
+            document.getElementById('authTitle').innerText = isLoginMode ? "Σύνδεση" : "Εγγραφή";
+            document.getElementById('authBtn').innerText = isLoginMode ? "Σύνδεση" : "Δημιουργία";
+            document.getElementById('toggleText').innerText = isLoginMode ? "Νέος εδώ; Εγγραφή" : "Έχεις λογαριασμό; Σύνδεση";
         }
 
-        function loginSuccess(user) {
-            currentUser = user;
+        async function initApp(user) {
+            let { data: profile } = await supabase.from('profiles').select('*').eq('user_id', user.id).single();
+            
+            // Create profile if doesn't exist
+            if(!profile) {
+                const { data: newProf } = await supabase.from('profiles').insert([{ 
+                    user_id: user.id, streak: 0, todos: [], theme: 'default' 
+                }]).select().single();
+                profile = newProf;
+            }
+            dbData = profile;
+            
+            // Switch UI
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
             document.querySelector('.fab-container').style.display = 'flex';
+            document.getElementById('greeting').innerText = `Καλησπέρα, ${user.email.split('@')[0]}!`;
             
-            const h = new Date().getHours();
-            document.getElementById('greeting').innerText = (h<12?"Καλημέρα":h>19?"Καλησπερα":"Καλημερα") + `, ${user}!`;
-            
-            loadUserData();
-            loadTheme(); // Load saved theme
+            updateUI();
             renderHome();
         }
 
-        function logout() {
-            currentUser = null;
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainContainer').style.display = 'none';
-            document.querySelector('.fab-container').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+        async function sync() {
+            if(!dbData) return;
+            await supabase.from('profiles').update({ 
+                streak: dbData.streak, todos: dbData.todos, theme: dbData.theme 
+            }).eq('user_id', dbData.user_id);
         }
 
-        // --- THEME LOGIC ---
-        function setTheme(themeName) {
-            document.body.setAttribute('data-theme', themeName);
-            localStorage.setItem(`${currentUser}_theme`, themeName);
-        }
-
-        function loadTheme() {
-            const savedTheme = localStorage.getItem(`${currentUser}_theme`);
-            if(savedTheme) document.body.setAttribute('data-theme', savedTheme);
-            else document.body.removeAttribute('data-theme');
-        }
-
-        // --- USER DATA ---
-        function loadUserData() {
-            const todos = JSON.parse(localStorage.getItem(`${currentUser}_todos`) || '[]');
+        function updateUI() {
+            document.getElementById('sessionCount').innerText = dbData.streak;
+            setTheme(dbData.theme, false);
+            
             const list = document.getElementById('todoList');
             list.innerHTML = '';
-            todos.forEach(t => createTodoEl(t.text, t.completed));
-            const streak = localStorage.getItem(`${currentUser}_streak`) || 0;
-            document.getElementById('sessionCount').innerText = streak;
+            if(dbData.todos) {
+                dbData.todos.forEach((t, i) => createTodoEl(t, i));
+            }
         }
 
-        function saveTodos() {
-            const items = [];
-            document.querySelectorAll('.todo-item').forEach(el => {
-                items.push({ text: el.querySelector('span').innerText, completed: el.classList.contains('completed') });
-            });
-            localStorage.setItem(`${currentUser}_todos`, JSON.stringify(items));
-        }
-
-        function addTodo() {
-            const val = document.getElementById('todoInput').value.trim();
-            if(!val) return;
-            createTodoEl(val, false);
-            saveTodos();
-            document.getElementById('todoInput').value = '';
-        }
-
-        function createTodoEl(text, completed) {
-            const li = document.createElement('li');
-            li.className = `todo-item ${completed?'completed':''}`;
-            li.innerHTML = `<div class="check-circle ${completed?'checked':''}" onclick="toggleTask(this)"></div><span>${text}</span><i class="fas fa-trash" style="margin-left:auto; cursor:pointer; opacity:0.5" onclick="this.parentElement.remove(); saveTodos()"></i>`;
-            document.getElementById('todoList').appendChild(li);
-        }
-
-        function toggleTask(el) {
-            el.classList.toggle('checked');
-            el.parentElement.classList.toggle('completed');
-            saveTodos();
-        }
-
-        // --- SUBJECTS (Your Corrected Data) ---
-        const subjects = [
+        // --- 3. UI FUNCTIONS ---
+       const subjects = [
             { 
                 id: 1, 
                 title: "Ανατομία III", 
@@ -545,12 +465,9 @@
             } 
         ];
 
-        const app = document.getElementById('app');
-        const hero = document.getElementById('hero-section');
-
         function renderHome() {
-            hero.style.display = 'grid';
-            // Render Subjects as GRID Cards
+            const app = document.getElementById('app');
+            document.getElementById('hero-section').style.display = 'grid';
             let html = '<div class="grid">';
             subjects.forEach(sub => {
                 html += `
@@ -560,26 +477,23 @@
                     <span style="opacity:0.6; font-size:0.85rem">${sub.files.length} Αρχεία</span>
                 </div>`;
             });
-            html += '</div>';
-            app.innerHTML = html;
+            app.innerHTML = html + '</div>';
         }
 
         function openSubject(id) {
             const sub = subjects.find(s => s.id === id);
-            hero.style.display = 'none';
+            document.getElementById('hero-section').style.display = 'none';
+            const app = document.getElementById('app');
             
-            // Header for Subject
             let html = `
             <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px; animation:slideUp 0.3s">
                 <button onclick="renderHome()" style="background:none; border:none; color:var(--text-dark); cursor:pointer; font-size:1.2rem;"><i class="fas fa-arrow-left"></i></button>
                 <h2 style="margin:0">${sub.title}</h2>
             </div>
-            
             <div class="chapter-list">`;
             
             if(sub.files.length === 0) html += '<p style="opacity:0.6; text-align:center">Δεν υπάρχουν αρχεία.</p>';
             else sub.files.forEach(f => {
-                // Render Files as LIST Items
                 html += `
                 <div class="chapter-item" onclick="openViewer('${f.file}', '${f.name}')">
                     <div class="chapter-info">
@@ -589,34 +503,57 @@
                     <i class="fas fa-chevron-right chapter-arrow"></i>
                 </div>`;
             });
-            html += '</div>';
-            app.innerHTML = html;
+            app.innerHTML = html + '</div>';
         }
 
         function openViewer(file, name) {
-            app.innerHTML = `<div class="viewer-container"><div class="mac-header"><div class="dots"><div class="dot red" onclick="openSubject(${subjects.find(s => s.files.some(f => f.name === name)).id})"></div><div class="dot yellow"></div><div class="dot green"></div></div><div style="opacity:0.7">${name}</div><div></div></div><iframe src="${file}"></iframe></div>`;
+            const app = document.getElementById('app');
+            app.innerHTML = `<div class="viewer-container"><div class="mac-header"><div class="dots"><div class="dot red" onclick="renderHome()"></div><div class="dot yellow"></div><div class="dot green"></div></div><div style="opacity:0.7">${name}</div><div></div></div><iframe src="${file}"></iframe></div>`;
         }
 
-        // --- PANELS & TIMER LOGIC ---
+        // --- 4. TODO LOGIC (CLOUD) ---
+        function addTodo() {
+            const val = document.getElementById('todoInput').value.trim();
+            if(!val) return;
+            if(!dbData.todos) dbData.todos = [];
+            dbData.todos.push(val); // Store simple string or object
+            sync(); updateUI();
+            document.getElementById('todoInput').value = '';
+        }
+
+        function createTodoEl(text, index) {
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+            li.innerHTML = `
+                <div class="check-circle" onclick="deleteTodo(${index})"></div>
+                <span>${text}</span>
+                <i class="fas fa-trash" style="margin-left:auto; cursor:pointer; opacity:0.5" onclick="deleteTodo(${index})"></i>
+            `;
+            document.getElementById('todoList').appendChild(li);
+        }
+
+        function deleteTodo(index) {
+            dbData.todos.splice(index, 1);
+            sync(); updateUI();
+        }
+
+        // --- 5. TIMER & PANELS ---
         function togglePanel(id) {
-            document.querySelectorAll('.panel').forEach(p => {
-                if(p.id !== id) p.classList.remove('active');
-            });
+            document.querySelectorAll('.panel').forEach(p => { if(p.id !== id) p.classList.remove('active'); });
             document.getElementById(id).classList.toggle('active');
         }
-        
-        function closePanels() {
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        function closePanels() { document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); }
+
+        function setTheme(themeName, save = true) {
+            document.body.setAttribute('data-theme', themeName);
+            if(save) { dbData.theme = themeName; sync(); }
         }
 
-        let timer;
-        let timeLeft = 25 * 60;
-        let isRunning = false;
-
-        function setMode(minutes, name, desc, btn) {
+        let timer, timeLeft = 25 * 60, isRunning = false;
+        
+        function setMode(min, name, desc, btn) {
             if(isRunning) return;
-            timeLeft = minutes * 60;
-            updateDisplay();
+            timeLeft = min * 60; updateDisplay();
             document.getElementById('modeDesc').innerText = desc;
             document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
@@ -627,49 +564,38 @@
             document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('customMin').style.display = 'block';
-            document.getElementById('modeDesc').innerText = "Πληκτρολόγησε τον χρόνο σου.";
         }
-
-        function setCustomMode(val) {
-            if(val && val > 0) { timeLeft = val * 60; updateDisplay(); }
-        }
-
+        function setCustomMode(val) { if(val > 0) { timeLeft = val * 60; updateDisplay(); } }
         function updateDisplay() {
             const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
             const s = (timeLeft%60).toString().padStart(2,'0');
             document.getElementById('timeDisplay').innerText = `${m}:${s}`;
         }
-
         function startTimer() {
-            if(isRunning) return;
-            isRunning = true;
-            document.getElementById('startBtn').style.display='none';
-            document.getElementById('stopBtn').style.display='inline-block';
-            timer = setInterval(() => {
-                timeLeft--; updateDisplay();
-                if(timeLeft <= 0) timeUp();
-            }, 1000);
+            if(isRunning) return; isRunning = true;
+            document.getElementById('startBtn').style.display='none'; document.getElementById('stopBtn').style.display='inline-block';
+            timer = setInterval(() => { timeLeft--; updateDisplay(); if(timeLeft <= 0) timeUp(); }, 1000);
         }
-
         function resetTimer() {
             clearInterval(timer); isRunning = false;
-            document.getElementById('startBtn').style.display='inline-block';
-            document.getElementById('stopBtn').style.display='none';
+            document.getElementById('startBtn').style.display='inline-block'; document.getElementById('stopBtn').style.display='none';
         }
-
         function timeUp() {
             resetTimer();
             document.getElementById('breakModal').style.display = 'flex';
             document.getElementById('alarmSound').play();
-            
-            let streak = parseInt(localStorage.getItem(`${currentUser}_streak`) || 0) + 1;
-            localStorage.setItem(`${currentUser}_streak`, streak);
-            document.getElementById('sessionCount').innerText = streak;
-
+            dbData.streak++; sync(); updateUI();
             timeLeft = 25 * 60; updateDisplay();
         }
-
         function closeModal() { document.getElementById('breakModal').style.display = 'none'; }
+
+        async function logout() { await supabase.auth.signOut(); location.reload(); }
+
+        // Auto-Check Session
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (session) initApp(session.user);
+        });
+
     </script>
 </body>
 </html>
