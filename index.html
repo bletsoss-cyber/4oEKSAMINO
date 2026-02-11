@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Ultimate Pro</title>
+    <title>Uni Hub Ultimate</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -13,7 +13,7 @@
             --bg-dark: #0f172a;
             --card-dark: rgba(30, 41, 59, 0.7);
             --text-dark: #e2e8f0;
-            --accent: #8b5cf6;
+            --accent: #8b5cf6; /* Violet */
             --accent-glow: rgba(139, 92, 246, 0.4);
             --success: #10b981; 
             --error: #ef4444;
@@ -122,7 +122,7 @@
         }
         .fab:hover { transform: scale(1.1) rotate(10deg); }
 
-        /* --- ADVANCED TIMER PANEL (ΟΠΩΣ ΤΟ ΗΘΕΛΕΣ) --- */
+        /* --- ADVANCED TIMER PANEL --- */
         .timer-panel {
             position: fixed; bottom: 100px; right: 30px; width: 340px;
             background: #1e1b4b; border: 1px solid var(--accent);
@@ -230,7 +230,7 @@
             <button class="btn-mode" onclick="setMode(90, 'Flow State', 'Ultradian Rhythm: Όταν έχεις πάρει φόρα.', this)">
                 <i class="fas fa-fire"></i> Flow
             </button>
-            <button class="btn-mode" onclick="setMode(5, 'Quick Start', 'Ο κανόνας των 5 λεπτών για την αναβλητικότητα.', this)">
+            <button class="btn-mode" onclick="setMode(5, 'Quick Start', 'Ο κανόνας των 5 λεπτών.', this)">
                 <i class="fas fa-bolt"></i> Quick
             </button>
         </div>
@@ -354,10 +354,21 @@
             saveTodos();
         }
 
-        // --- SUBJECTS & VIEWER ---
+        // --- SUBJECTS (Configured for "notes" folder) ---
         const subjects = [
-            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "anatomy1.html"}] },
-            { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [] },
+            { 
+                id: 1, title: "Ανατομία III", icon: "fa-skull", 
+                files: [
+                    {name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"},
+                    {name: "Κεφ 2: Νευρικό", file: "notes/anatomy2.html"}
+                ] 
+            },
+            { 
+                id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", 
+                files: [
+                    {name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html"}
+                ] 
+            },
             { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
             { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [] },
             { id: 5, title: "Προκλινική", icon: "fa-notes-medical", files: [] },
