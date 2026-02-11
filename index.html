@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub Ultimate</title>
+    <title>Uni Hub Ultimate Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 
@@ -13,7 +13,7 @@
             --bg-dark: #0f172a;
             --card-dark: rgba(30, 41, 59, 0.7);
             --text-dark: #e2e8f0;
-            --accent: #8b5cf6; /* Violet */
+            --accent: #8b5cf6;
             --accent-glow: rgba(139, 92, 246, 0.4);
             --success: #10b981; 
             --error: #ef4444;
@@ -91,54 +91,28 @@
         .check-circle.checked { background: var(--accent); }
         .todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
 
-        /* --- GRID CARDS & HOVER EFFECT (ΤΟ ΕΦΕ ΠΟΥ ΗΘΕΛΕΣ) --- */
+        /* --- GRID CARDS & HOVER EFFECT --- */
         .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: slideUp 0.8s ease; }
-        
         .card {
-            background: var(--card-dark); 
-            border: var(--border); 
-            width: 280px; 
-            padding: 25px;
-            border-radius: 20px; 
-            cursor: pointer; 
-            position: relative; /* Σημαντικό για το εφέ */
-            overflow: hidden;   /* Σημαντικό για το εφέ */
-            transition: 0.3s; 
-            text-align: center;
-            backdrop-filter: blur(12px);
+            background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
+            border-radius: 20px; cursor: pointer; position: relative; overflow: hidden;
+            transition: 0.3s; text-align: center; backdrop-filter: blur(12px);
             display: flex; flex-direction: column; align-items: center;
         }
-
-        /* Η ΓΡΑΜΜΗ ΠΟΥ ΓΕΜΙΖΕΙ */
         .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px; /* Πάχος γραμμής */
-            background: var(--accent);
-            transform: scaleX(0); /* Ξεκινάει αόρατη */
-            transform-origin: left; /* Γεμίζει από αριστερά */
-            transition: transform 0.3s ease;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease;
         }
-
         .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--accent); }
-        .card:hover::before { transform: scaleX(1); /* Γεμίζει στο hover */ }
+        .card:hover::before { transform: scaleX(1); }
         
         .icon-box {
             width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 18px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin-bottom: 15px;
-            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dark); margin-bottom: 15px; transition: 0.3s;
         }
         .card:hover .icon-box { background: var(--accent); color: white; transform: rotate(10deg); }
 
-        /* --- VIEWER --- */
-        .viewer-container { background: var(--card-dark); border: var(--border); border-radius: 20px; height: 80vh; display: flex; flex-direction: column; animation: slideUp 0.5s; }
-        .mac-header { padding: 12px 20px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
-        .dots { display: flex; gap: 8px; } .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .red { background: #ff5f57; } .yellow { background: #febc2e; } .green { background: #28c840; }
-        iframe { flex: 1; width: 100%; border: none; background: white; }
-
-        /* --- BRAIN BUTTON & TIMER (ΕΠΕΣΤΡΕΨΑΝ!) --- */
+        /* --- BRAIN BUTTON (FAB) --- */
         .fab {
             position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
             background: var(--accent); color: white; border-radius: 50%;
@@ -148,37 +122,44 @@
         }
         .fab:hover { transform: scale(1.1) rotate(10deg); }
 
+        /* --- ADVANCED TIMER PANEL (ΟΠΩΣ ΤΟ ΗΘΕΛΕΣ) --- */
         .timer-panel {
-            position: fixed; bottom: 100px; right: 30px; width: 320px;
+            position: fixed; bottom: 100px; right: 30px; width: 340px;
             background: #1e1b4b; border: 1px solid var(--accent);
             border-radius: 24px; padding: 25px; z-index: 99; display: none;
             box-shadow: 0 20px 60px rgba(0,0,0,0.7); animation: slideUp 0.3s;
         }
         .timer-panel.active { display: block; }
-        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; letter-spacing: -2px; margin: 10px 0; }
         
-        .timer-modes { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        .mode-btn { background: rgba(255,255,255,0.1); border:none; color:white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
-        .mode-btn:hover { background: var(--accent); }
+        .modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        
+        .btn-mode {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dark); padding: 10px; border-radius: 12px;
+            cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .btn-mode:hover { background: rgba(255,255,255,0.1); }
+        .btn-mode.active { background: var(--accent); border-color: var(--accent); color: white; }
+        
+        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; letter-spacing: -2px; margin: 5px 0; }
+        .mode-desc { text-align: center; font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; min-height: 1.2em; }
+        .custom-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px; border-radius: 8px; text-align: center; margin-top: 10px; display: none; }
 
         .btn-action { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; }
         .btn-start { background: linear-gradient(90deg, var(--accent), #6366f1); color: white; }
         .btn-stop { background: #ef4444; color: white; display: none; }
 
-        /* MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
-            z-index: 200; display: none; justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: linear-gradient(145deg, #2e1065, #1e1b4b);
-            padding: 40px; border-radius: 30px; text-align: center; max-width: 400px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            animation: zoomIn 0.3s;
-        }
+        /* VIEWER & MODAL */
+        .viewer-container { background: var(--card-dark); border: var(--border); border-radius: 20px; height: 80vh; display: flex; flex-direction: column; animation: slideUp 0.5s; }
+        .mac-header { padding: 12px 20px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
+        .dots { display: flex; gap: 8px; } .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+        .red { background: #ff5f57; } .yellow { background: #febc2e; } .green { background: #28c840; }
+        iframe { flex: 1; width: 100%; border: none; background: white; }
 
-        /* ANIMATIONS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 200; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: linear-gradient(145deg, #2e1065, #1e1b4b); padding: 40px; border-radius: 30px; text-align: center; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: zoomIn 0.3s; }
+
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -193,10 +174,8 @@
             <div style="font-size:3rem; color:var(--accent); margin-bottom:10px"><i class="fas fa-brain"></i></div>
             <h2 id="formTitle">Καλωσόρισες</h2>
             <div id="loginMsg" class="msg-box"></div>
-            
             <input type="text" id="username" class="login-input" placeholder="Όνομα Χρήστη">
             <input type="password" id="password" class="login-input" placeholder="Κωδικός">
-            
             <button class="login-btn" onclick="handleAuth()">Σύνδεση</button>
             <div class="toggle-text" onclick="toggleAuthMode()">
                 <span id="toggleText">Νέος εδώ; Δημιούργησε λογαριασμό</span>
@@ -205,7 +184,6 @@
     </div>
 
     <div id="mainContainer" class="container">
-        
         <div id="hero-section" class="hero">
             <div class="hero-card">
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Έξοδος</button>
@@ -218,7 +196,6 @@
                     <span id="sessionCount">0</span> Sessions
                 </div>
             </div>
-
             <div class="todo-widget">
                 <div style="font-weight:700; margin-bottom:15px; display:flex; justify-content:space-between">
                     <span>Στόχοι</span> <i class="fas fa-tasks" style="opacity:0.5"></i>
@@ -230,7 +207,6 @@
                 <ul class="todo-list" id="todoList"></ul>
             </div>
         </div>
-
         <main id="app"></main>
     </div>
 
@@ -240,17 +216,32 @@
 
     <div class="timer-panel" id="timerPanel">
         <div style="display:flex; justify-content:space-between; margin-bottom:15px">
-            <h3>Focus Timer</h3>
+            <h3>Επιλογή Μεθόδου</h3>
             <i class="fas fa-times" style="cursor:pointer; opacity:0.6" onclick="toggleTimerPanel()"></i>
         </div>
         
-        <div class="timer-modes">
-            <button class="mode-btn" onclick="setTime(25)">🍅 25'</button>
-            <button class="mode-btn" onclick="setTime(50)">🧠 50'</button>
-            <button class="mode-btn" onclick="setTime(90)">🔥 90'</button>
+        <div class="modes-grid">
+            <button class="btn-mode active" onclick="setMode(25, 'Pomodoro', 'Κλασικό 25άρι για γρήγορη αρχή.', this)">
+                <i class="fas fa-stopwatch"></i> Pomodoro
+            </button>
+            <button class="btn-mode" onclick="setMode(50, 'Deep Work', 'Βαθιά συγκέντρωση για δύσκολα μαθήματα.', this)">
+                <i class="fas fa-brain"></i> Deep Work
+            </button>
+            <button class="btn-mode" onclick="setMode(90, 'Flow State', 'Ultradian Rhythm: Όταν έχεις πάρει φόρα.', this)">
+                <i class="fas fa-fire"></i> Flow
+            </button>
+            <button class="btn-mode" onclick="setMode(5, 'Quick Start', 'Ο κανόνας των 5 λεπτών για την αναβλητικότητα.', this)">
+                <i class="fas fa-bolt"></i> Quick
+            </button>
         </div>
 
+        <button class="btn-mode" style="width:100%; flex-direction:row; justify-content:center; gap:10px" onclick="toggleCustomInput(this)">
+            <i class="fas fa-cog"></i> Custom
+        </button>
+        <input type="number" id="customMin" class="custom-input" placeholder="Λεπτά (π.χ. 40)" onchange="setCustomMode(this.value)">
+
         <div class="timer-display" id="timeDisplay">25:00</div>
+        <div class="mode-desc" id="modeDesc">Κλασικό 25άρι για γρήγορη αρχή.</div>
         
         <button class="btn-action btn-start" id="startBtn" onclick="startTimer()">Έναρξη</button>
         <button class="btn-action btn-stop" id="stopBtn" onclick="resetTimer()">Διακοπή</button>
@@ -268,7 +259,7 @@
     <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
 
     <script>
-        // --- AUTH & DATA LOGIC ---
+        // --- AUTH & DATA ---
         let currentUser = null;
         let isLoginMode = true;
 
@@ -307,11 +298,10 @@
             currentUser = user;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
-            document.querySelector('.fab').style.display = 'flex'; // Show Brain Button
+            document.querySelector('.fab').style.display = 'flex';
             
             const h = new Date().getHours();
             document.getElementById('greeting').innerText = (h<12?"Καλημέρα":h>19?"Καληνύχτα":"Καλησπέρα") + `, ${user}!`;
-            
             loadUserData();
             renderHome();
         }
@@ -320,20 +310,17 @@
             currentUser = null;
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'none';
-            document.querySelector('.fab').style.display = 'none'; // Hide Brain Button
+            document.querySelector('.fab').style.display = 'none';
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
         }
 
         // --- USER DATA ---
         function loadUserData() {
-            // Todos
             const todos = JSON.parse(localStorage.getItem(`${currentUser}_todos`) || '[]');
             const list = document.getElementById('todoList');
             list.innerHTML = '';
             todos.forEach(t => createTodoEl(t.text, t.completed));
-            
-            // Streak
             const streak = localStorage.getItem(`${currentUser}_streak`) || 0;
             document.getElementById('sessionCount').innerText = streak;
         }
@@ -367,7 +354,7 @@
             saveTodos();
         }
 
-        // --- TIMER & UI LOGIC ---
+        // --- SUBJECTS & VIEWER ---
         const subjects = [
             { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "anatomy1.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [] },
@@ -417,18 +404,36 @@
             app.innerHTML = `<div class="viewer-container"><div class="mac-header"><div class="dots"><div class="dot red" onclick="renderHome()"></div><div class="dot yellow"></div><div class="dot green"></div></div><div style="opacity:0.7">${name}</div><div></div></div><iframe src="${file}"></iframe></div>`;
         }
 
-        // Timer Vars
+        // --- ADVANCED TIMER LOGIC ---
         let timer;
         let timeLeft = 25 * 60;
         let isRunning = false;
 
         function toggleTimerPanel() { document.getElementById('timerPanel').classList.toggle('active'); }
         
-        function setTime(min) {
+        function setMode(minutes, name, desc, btn) {
             if(isRunning) return;
-            timeLeft = min * 60; updateDisplay();
+            timeLeft = minutes * 60;
+            updateDisplay();
+            document.getElementById('modeDesc').innerText = desc;
+            
+            // UI Toggle
+            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            document.getElementById('customMin').style.display = 'none';
         }
-        
+
+        function toggleCustomInput(btn) {
+            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('customMin').style.display = 'block';
+            document.getElementById('modeDesc').innerText = "Πληκτρολόγησε τον χρόνο σου.";
+        }
+
+        function setCustomMode(val) {
+            if(val && val > 0) { timeLeft = val * 60; updateDisplay(); }
+        }
+
         function updateDisplay() {
             const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
             const s = (timeLeft%60).toString().padStart(2,'0');
@@ -457,7 +462,6 @@
             document.getElementById('breakModal').style.display = 'flex';
             document.getElementById('alarmSound').play();
             
-            // Save Streak
             let streak = parseInt(localStorage.getItem(`${currentUser}_streak`) || 0) + 1;
             localStorage.setItem(`${currentUser}_streak`, streak);
             document.getElementById('sessionCount').innerText = streak;
