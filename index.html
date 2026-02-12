@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub - Study Master</title>
+    <title>4o ΕΞΑΜΗΝΟ - Study</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -238,7 +238,7 @@
             </div>
 
             <div style="flex:1; display:flex; flex-direction:column; justify-content:end;">
-                <span style="font-size:0.8rem; opacity:0.6; letter-spacing:1px;">SESSION NOTES</span>
+                <span style="font-size:0.8rem; opacity:0.6; letter-spacing:1px;">ΣΗΜΕΙΩΣΕΙΣ</span>
                 <textarea id="notesArea" class="notepad" placeholder="Thoughts..." oninput="saveNotes()"></textarea>
             </div>
         </div>
@@ -247,9 +247,9 @@
     <div id="breakModal" class="modal-bg">
         <div class="modal-box">
             <div style="font-size:3rem; margin-bottom:15px;">☕</div>
-            <h2 style="margin-bottom:10px;">Μπράβο!</h2>
+            <h2 style="margin-bottom:10px;">Μπράβο Bro!</h2>
             <p id="breakMessage" style="font-size:1.1rem; opacity:0.9; margin-bottom:20px;"></p>
-            <p style="color:var(--accent); font-weight:bold; margin-bottom:30px;">Αξίζεις ένα καλό διάλειμμα.</p>
+            <p style="color:var(--accent); font-weight:bold; margin-bottom:30px;">Αξίζεις ένα καλό διάλειμμα Bro.</p>
             <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Συνέχεια</button>
         </div>
     </div>
@@ -258,8 +258,8 @@
 
     <script>
         // --- CONFIG ---
-        const SUPABASE_URL = "ΒΑΛΕ_ΕΔΩ_ΤΟ_URL";
-        const SUPABASE_KEY = "ΒΑΛΕ_ΕΔΩ_ΤΟ_ANON_KEY";
+        const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let dbData = null;
