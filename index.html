@@ -3,42 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub - Professional Edition</title>
+    <title>Uni Hub - Final Design</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. THEME VARIABLES (V17/V25 STYLE) --- */
+        /* --- 1. THEME VARIABLES --- */
         :root {
-            --bg-dark: #1e1b4b; /* Indigo 950 */
+            --bg-dark: #1e1b4b;
             --card-dark: rgba(30, 27, 75, 0.9);
             --text-dark: #e0e7ff;
             --text-muted: #94a3b8;
-            --accent: #8b5cf6; /* Violet 500 */
+            --accent: #8b5cf6;
             --accent-glow: rgba(139, 92, 246, 0.4);
             --border: 1px solid rgba(255, 255, 255, 0.1);
             --bg-gradient: radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.3), transparent 25%), 
                            radial-gradient(circle at 85% 30%, rgba(124, 58, 237, 0.15), transparent 25%);
-            --progress-bg: rgba(255,255,255,0.1);
             --progress-fill: linear-gradient(90deg, #8b5cf6, #a78bfa);
         }
 
-        /* GLOBAL SETUP */
         body {
-            background-color: var(--bg-dark);
-            background-image: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-dark);
-            font-family: 'Outfit', sans-serif;
-            margin: 0; padding: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
+            background-color: var(--bg-dark); background-image: var(--bg-gradient); background-attachment: fixed;
+            color: var(--text-dark); font-family: 'Outfit', sans-serif; margin: 0; padding: 0;
+            min-height: 100vh; overflow-x: hidden;
         }
         * { box-sizing: border-box; transition: all 0.3s ease; }
 
-        /* --- LOGIN (Professional) --- */
+        /* --- LOGIN --- */
         .login-wrapper { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: var(--bg-dark); z-index: 5000; }
         .login-box { background: var(--card-dark); padding: 40px; border-radius: 24px; width: 380px; text-align: center; border: var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
         .login-input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.05); border: var(--border); border-radius: 8px; color: white; outline: none; }
@@ -49,57 +42,65 @@
         /* --- LAYOUT --- */
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; display: none; }
         
-        .hero-section {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; animation: fadeIn 0.8s;
-        }
-
-        /* MAIN DASHBOARD CARD */
-        .hero-card {
-            background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 35px;
-            position: relative; display: flex; flex-direction: column; justify-content: space-between;
-        }
+        .hero-section { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; animation: fadeIn 0.8s; }
+        .hero-card { background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 35px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .hero-title { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
         .hero-subtitle { color: var(--text-muted); font-size: 1rem; }
         
-        /* MILESTONE WIDGET (The "Hidden" Stimulus) */
-        .milestone-widget {
-            margin-top: 30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: var(--border);
-        }
+        /* MILESTONE */
+        .milestone-widget { margin-top: 30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: var(--border); }
         .milestone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .milestone-title { font-size: 0.9rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .milestone-edit { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
-        .milestone-edit:hover { color: white; }
-
-        .progress-container { width: 100%; height: 8px; background: var(--progress-bg); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
         .progress-bar { height: 100%; background: var(--progress-fill); width: 0%; transition: width 1s ease; }
         .progress-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
 
-        /* STATS CARD (Right Side) */
-        .stats-card {
-            background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 30px;
-            display: flex; flex-direction: column; gap: 20px;
-        }
+        .stats-card { background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; gap: 20px; }
         .stat-item { display: flex; align-items: center; gap: 15px; }
         .stat-icon { width: 45px; height: 45px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.2rem; }
         .stat-info h4 { font-size: 1.5rem; font-weight: 700; margin: 0; }
         .stat-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
-        /* --- SUBJECTS GRID --- */
+        /* --- SUBJECTS GRID (SQUARE CARDS - OLD STYLE) --- */
         .grid-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 50px; animation: slideUp 0.8s; }
         
+        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-bottom: 50px; animation: slideUp 0.8s; }
+        
+        /* ORIGINAL CARD DESIGN (Square/Vertical) */
         .card {
-            background: var(--card-dark); border: var(--border); padding: 30px; border-radius: 20px;
-            cursor: pointer; position: relative; overflow: hidden; text-align: center;
-            display: flex; flex-direction: column; align-items: center; height: 220px;
+            background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
+            border-radius: 20px; cursor: pointer; text-align: center; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 220px;
         }
-        /* The Clean Hover Effect */
         .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .card-icon { font-size: 2.5rem; margin-bottom: 20px; color: var(--accent); opacity: 0.9; }
+        
+        /* Border Animation */
+        .card span { position: absolute; display: block; background: var(--accent); transition: 0.5s; }
+        .card span:nth-child(1) { top:0; left:0; width:0; height:2px; } .card:hover span:nth-child(1) { width:100%; }
+        .card span:nth-child(2) { top:0; right:0; width:2px; height:0; transition-delay:0.1s; } .card:hover span:nth-child(2) { height:100%; }
+        .card span:nth-child(3) { bottom:0; right:0; width:0; height:2px; transition-delay:0.2s; } .card:hover span:nth-child(3) { width:100%; }
+        .card span:nth-child(4) { bottom:0; left:0; width:2px; height:0; transition-delay:0.3s; } .card:hover span:nth-child(4) { height:100%; }
+
+        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--accent); }
         .card h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
         .card p { font-size: 0.9rem; color: var(--text-muted); }
 
-        /* --- GLOBAL SIDEBAR (The Timer) --- */
+        /* --- CHAPTER MENU (MACROSTENA / WIDE BARS) --- */
+        .chapter-container { display: none; max-width: 900px; margin: 0 auto; animation: slideUp 0.5s; }
+        .chapter-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        
+        /* WIDE BAR STYLE FOR CHAPTERS */
+        .chapter-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--card-dark); border: var(--border); padding: 18px 25px;
+            border-radius: 12px; cursor: pointer; transition: 0.2s; width: 100%;
+        }
+        .chapter-item:hover { border-color: var(--accent); transform: translateX(5px); background: rgba(255,255,255,0.05); }
+        .chapter-title { font-weight: 500; font-size: 1.05rem; display: flex; align-items: center; gap: 15px; }
+        .chapter-icon { color: var(--accent); opacity: 0.8; font-size: 0.9rem; }
+
+        /* --- GLOBAL SIDEBAR --- */
         .sidebar {
             position: fixed; top: 0; right: -380px; width: 380px; height: 100%;
             background: rgba(19, 15, 37, 0.98); border-left: 1px solid var(--accent);
@@ -117,7 +118,6 @@
         .sidebar-handle i { color: rgba(255,255,255,0.3); font-size: 0.9rem; }
         .sidebar-handle:hover i { color: white; }
 
-        /* TIMER UI */
         .timer-display { font-size: 4rem; font-weight: 300; text-align: center; color: white; margin-bottom: 5px; font-variant-numeric: tabular-nums; }
         .timer-status { text-align: center; color: var(--accent); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; }
         
@@ -132,23 +132,19 @@
         .timer-btn span { font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 2px; }
         .timer-btn .tag { font-weight: 700; color: var(--accent); font-size: 1rem; }
 
-        /* NOTEPAD */
-        .notepad {
-            flex: 1; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 12px;
-            color: var(--text-dark); padding: 15px; resize: none; outline: none; font-size: 0.95rem; line-height: 1.6;
-        }
+        .notepad { flex: 1; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 12px; color: var(--text-dark); padding: 15px; resize: none; outline: none; font-size: 0.95rem; line-height: 1.6; }
         .notepad:focus { border-color: var(--accent); }
 
-        /* --- MODALS & VIEWER --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-dark); border: 1px solid var(--accent); padding: 35px; border-radius: 20px; width: 400px; text-align: center; animation: slideUp 0.3s; }
-        
+        /* --- VIEWER --- */
         .viewer-overlay { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; }
         iframe { width: 100%; height: 100%; border: none; background: white; }
         .back-float { position: fixed; top: 25px; left: 25px; z-index: 3005; background: rgba(30, 27, 75, 0.8); color: white; padding: 10px 20px; border-radius: 30px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem; backdrop-filter: blur(10px); }
         .back-float:hover { background: var(--accent); border-color: var(--accent); }
 
-        /* ANIMATIONS */
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-dark); border: 1px solid var(--accent); padding: 35px; border-radius: 20px; width: 400px; text-align: center; animation: slideUp 0.3s; }
+
         @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
         @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
     </style>
@@ -169,122 +165,73 @@
     <div id="mainContainer" class="container">
         
         <div class="hero-section">
-            
             <div class="hero-card">
                 <div>
                     <button onclick="logout()" style="float:right; background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
                     <div class="hero-title">Welcome, <span id="usernameDisp" style="color:var(--accent)">Stathis</span>.</div>
                     <div class="hero-subtitle">Let's maintain focus today.</div>
                 </div>
-
                 <div class="milestone-widget">
                     <div class="milestone-header">
                         <span class="milestone-title"><i class="fas fa-flag"></i> Current Milestone</span>
                         <button class="milestone-edit" onclick="openMilestoneModal()"><i class="fas fa-cog"></i> Config</button>
                     </div>
                     <div style="font-size:1.1rem; font-weight:600; margin-bottom:5px;" id="milestoneName">No Active Goal</div>
-                    
-                    <div class="progress-container">
-                        <div id="milestoneBar" class="progress-bar"></div>
-                    </div>
-                    
+                    <div class="progress-container"><div id="milestoneBar" class="progress-bar"></div></div>
                     <div class="progress-stats">
                         <span><span id="milestoneCurrent">0</span> hrs done</span>
                         <span>Target: <span id="milestoneTarget">0</span> hrs</span>
                     </div>
                 </div>
             </div>
-
             <div class="stats-card">
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-fire"></i></div>
-                    <div class="stat-info">
-                        <h4 id="streakCount">0</h4>
-                        <p>Day Streak</p>
-                    </div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info">
-                        <h4 id="todayMins">0</h4>
-                        <p>Minutes Today</p>
-                    </div>
-                </div>
+                <div class="stat-item"><div class="stat-icon"><i class="fas fa-fire"></i></div><div class="stat-info"><h4 id="streakCount">0</h4><p>Day Streak</p></div></div>
+                <div class="stat-item"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-info"><h4 id="todayMins">0</h4><p>Minutes Today</p></div></div>
             </div>
         </div>
 
-        <div class="grid-header">LIBRARY</div>
-        <div id="subjectsGrid" class="grid"></div>
+        <div id="subjectsSection">
+            <div class="grid-header">LIBRARY</div>
+            <div id="subjectsGrid" class="grid"></div>
+        </div>
+
+        <div id="chapterSection" class="chapter-container">
+            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                <button onclick="showGrid()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button>
+                <h2 id="chapterTitle">Title</h2>
+            </div>
+            <div id="chapterList" class="chapter-list"></div>
+        </div>
 
     </div>
 
     <div id="sidebar" class="sidebar">
-        <div class="sidebar-handle" onclick="toggleSidebar()">
-            <i class="fas fa-chevron-left" id="handleIcon"></i>
-        </div>
-
+        <div class="sidebar-handle" onclick="toggleSidebar()"><i class="fas fa-chevron-left" id="handleIcon"></i></div>
         <div>
             <div id="timerDisplay" class="timer-display">25:00</div>
             <div id="timerMode" class="timer-status">IDLE</div>
-            
             <div class="timer-options">
-                <div class="timer-btn" onclick="startTimer(25, 'POMODORO')">
-                    <div><strong>Pomodoro</strong><span>Standard Focus</span></div><div class="tag">25</div>
-                </div>
-                <div class="timer-btn" onclick="startTimer(50, 'DEEP WORK')">
-                    <div><strong>Deep Work</strong><span>Intensive Session</span></div><div class="tag">50</div>
-                </div>
-                <div class="timer-btn" onclick="startTimer(90, 'FLOW STATE')">
-                    <div><strong>Flow State</strong><span>Full Immersion</span></div><div class="tag">90</div>
-                </div>
-                <div class="timer-btn" onclick="startTimer(5, 'QUICK START')">
-                    <div><strong>Quick Start</strong><span>Warm Up</span></div><div class="tag">05</div>
-                </div>
-                <div class="timer-btn" onclick="customTimer()">
-                    <div><strong>Custom</strong><span>Set duration</span></div><div><i class="fas fa-ellipsis-h" style="color:var(--accent)"></i></div>
-                </div>
+                <div class="timer-btn" onclick="startTimer(25, 'POMODORO')"><div><strong>Pomodoro</strong><span>Standard Focus</span></div><div class="tag">25</div></div>
+                <div class="timer-btn" onclick="startTimer(50, 'DEEP WORK')"><div><strong>Deep Work</strong><span>Intensive Session</span></div><div class="tag">50</div></div>
+                <div class="timer-btn" onclick="startTimer(90, 'FLOW STATE')"><div><strong>Flow State</strong><span>Full Immersion</span></div><div class="tag">90</div></div>
+                <div class="timer-btn" onclick="startTimer(5, 'QUICK START')"><div><strong>Quick Start</strong><span>Warm Up</span></div><div class="tag">05</div></div>
+                <div class="timer-btn" onclick="customTimer()"><div><strong>Custom</strong><span>Set duration</span></div><div><i class="fas fa-ellipsis-h" style="color:var(--accent)"></i></div></div>
             </div>
-            
             <button class="btn-main" style="background:#ef4444; width:100%; margin-top:20px;" onclick="stopTimer()">End Session</button>
         </div>
-
         <div style="flex:1; display:flex; flex-direction:column;">
             <div style="margin-bottom:10px; font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Notes</div>
             <textarea id="notesArea" class="notepad" placeholder="Capture ideas..." oninput="saveNotes()"></textarea>
         </div>
     </div>
 
-    <div id="viewerOverlay" class="viewer-overlay">
-        <div class="back-float" onclick="closeViewer()"><i class="fas fa-arrow-left"></i> Dashboard</div>
-        <iframe id="contentFrame" src=""></iframe>
-    </div>
-
-    <div id="milestoneModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 style="margin-bottom:20px;">Set Weekly Milestone</h3>
-            <input type="text" id="msNameIn" class="login-input" placeholder="Goal Name (e.g. Anatomy Exam)">
-            <input type="number" id="msTargetIn" class="login-input" placeholder="Target Hours">
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-main" style="background:transparent; border:1px solid #555;" onclick="document.getElementById('milestoneModal').style.display='none'">Cancel</button>
-                <button class="btn-main" onclick="setMilestone()">Save Goal</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="breakModal" class="modal-overlay">
-        <div class="modal-content">
-            <div style="font-size:3rem; margin-bottom:15px;">🍵</div>
-            <h2 style="margin-bottom:10px;">Session Complete</h2>
-            <p id="breakMessage" style="color:var(--text-muted); margin-bottom:25px;"></p>
-            <p style="color:var(--accent); font-weight:600; margin-bottom:25px;">Take a break. Recovery is part of performance.</p>
-            <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Continue</button>
-        </div>
-    </div>
-
+    <div id="viewerOverlay" class="viewer-overlay"><div class="back-float" onclick="closeViewer()"><i class="fas fa-arrow-left"></i> Dashboard</div><iframe id="contentFrame" src=""></iframe></div>
+    <div id="milestoneModal" class="modal-overlay"><div class="modal-content"><h3 style="margin-bottom:20px;">Set Weekly Milestone</h3><input type="text" id="msNameIn" class="login-input" placeholder="Goal Name"><input type="number" id="msTargetIn" class="login-input" placeholder="Target Hours"><div style="display:flex; gap:10px; margin-top:20px;"><button class="btn-main" style="background:transparent; border:1px solid #555;" onclick="document.getElementById('milestoneModal').style.display='none'">Cancel</button><button class="btn-main" onclick="setMilestone()">Save Goal</button></div></div></div>
+    <div id="breakModal" class="modal-overlay"><div class="modal-content"><div style="font-size:3rem; margin-bottom:15px;">🍵</div><h2 style="margin-bottom:10px;">Session Complete</h2><p id="breakMessage" style="color:var(--text-muted); margin-bottom:25px;"></p><p style="color:var(--accent); font-weight:600; margin-bottom:25px;">Take a break.</p><button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Continue</button></div></div>
     <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
 
     <script>
-        // --- CONFIGURATION ---
+        // --- CONFIG ---
         const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
         const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -294,21 +241,20 @@
         let timerInterval = null;
 
         const subjects = [
-            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "test.html"}] },
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [{name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html"}] },
-            { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
-            { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [] },
-            { id: 5, title: "Προκλινική", icon: "fa-notes-medical", files: [] },
-            { id: 6, title: "Ακτινολογία", icon: "fa-x-ray", files: [] },
-            { id: 7, title: "Προληπτική", icon: "fa-shield-virus", files: [] }
+            { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/genetics1.html"}] },
+            { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [{name: "Κεφ 1: Εργαλεία", file: "notes/surgery1.html"}] },
+            { id: 5, title: "Προκλινική", icon: "fa-notes-medical", files: [{name: "Κεφ 1: Αρχές", file: "notes/preclinical1.html"}] },
+            { id: 6, title: "Ακτινολογία", icon: "fa-x-ray", files: [{name: "Κεφ 1: Ακτίνες Χ", file: "notes/radio1.html"}] },
+            { id: 7, title: "Προληπτική", icon: "fa-shield-virus", files: [{name: "Κεφ 1: Φθορίωση", file: "notes/preventive1.html"}] }
         ];
 
         // --- AUTH ---
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
-            if(!email || !password) return alert("Please fill all fields.");
-            
+            if(!email || !password) return alert("Fill fields");
             try {
                 if(isLoginMode) {
                     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
@@ -316,155 +262,105 @@
                 } else {
                     const { error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) throw error;
-                    alert("Account created. Please log in."); toggleAuthMode();
+                    alert("Created. Log in."); toggleAuthMode();
                 }
             } catch(e) { alert(e.message); }
         }
-
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.querySelector('.btn-main').innerText = isLoginMode ? "LOG IN" : "CREATE ACCOUNT";
-        }
+        function toggleAuthMode() { isLoginMode = !isLoginMode; document.querySelector('.btn-main').innerText = isLoginMode ? "LOG IN" : "CREATE ACCOUNT"; }
 
         // --- INIT ---
         async function initApp(user) {
-            // Fetch Profile + Stats
             let { data } = await supabaseClient.from('profiles').select('*').eq('user_id', user.id).single();
             if(!data) {
-                // Default structure if new
-                const { data: newProf } = await supabaseClient.from('profiles').insert([{ 
-                    user_id: user.id, streak: 0, notes: '', 
-                    stats: { daily_min: 0, milestone_name: "Set Goal", milestone_done: 0, milestone_target: 10 }
-                }]).select().single();
+                const { data: newProf } = await supabaseClient.from('profiles').insert([{ user_id: user.id, streak: 0, notes: '', stats: { daily_min: 0, milestone_name: "Set Goal", milestone_done: 0, milestone_target: 10 } }]).select().single();
                 data = newProf;
             }
             dbData = data;
             if(!dbData.stats) dbData.stats = { daily_min: 0, milestone_name: "Set Goal", milestone_done: 0, milestone_target: 10 };
-
             document.getElementById('loginScreen').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
             document.getElementById('usernameDisp').innerText = user.email.split('@')[0];
             document.getElementById('notesArea').value = dbData.notes || '';
-            
-            renderSubjects();
-            updateUI();
+            renderSubjects(); updateUI();
         }
+        async function sync() { if(dbData) await supabaseClient.from('profiles').update({ streak: dbData.streak, notes: dbData.notes, stats: dbData.stats }).eq('user_id', dbData.user_id); }
 
-        async function sync() {
-            if(dbData) await supabaseClient.from('profiles').update({ 
-                streak: dbData.streak, notes: dbData.notes, stats: dbData.stats 
-            }).eq('user_id', dbData.user_id);
-        }
-
-        // --- UI UPDATES ---
         function updateUI() {
             const s = dbData.stats;
             document.getElementById('streakCount').innerText = dbData.streak;
             document.getElementById('todayMins').innerText = s.daily_min;
-
-            // Update Milestone Widget
             document.getElementById('milestoneName').innerText = s.milestone_name;
             document.getElementById('milestoneCurrent').innerText = (s.milestone_done / 60).toFixed(1);
             document.getElementById('milestoneTarget').innerText = (s.milestone_target / 60).toFixed(0);
-            
-            const percent = Math.min((s.milestone_done / s.milestone_target) * 100, 100);
-            document.getElementById('milestoneBar').style.width = percent + '%';
+            document.getElementById('milestoneBar').style.width = Math.min((s.milestone_done / s.milestone_target) * 100, 100) + '%';
         }
 
+        // --- RENDER ---
         function renderSubjects() {
             const grid = document.getElementById('subjectsGrid');
             let html = '';
             subjects.forEach(s => {
                 html += `
-                <div class="card" onclick="openViewer('${s.files.length>0 ? s.files[0].file : ''}')">
+                <div class="card" onclick="openChapterMenu(${s.id})">
+                    <span></span><span></span><span></span><span></span>
                     <div class="card-icon"><i class="fas ${s.icon}"></i></div>
                     <h3>${s.title}</h3>
-                    <p>${s.files.length} Resources</p>
+                    <p>${s.files.length} Chapters</p>
                 </div>`;
             });
             grid.innerHTML = html;
         }
 
-        // --- TIMER (GLOBAL) ---
+        function openChapterMenu(id) {
+            const sub = subjects.find(s => s.id === id);
+            document.getElementById('subjectsSection').style.display = 'none';
+            document.getElementById('chapterSection').style.display = 'block';
+            document.getElementById('chapterTitle').innerText = sub.title;
+            const list = document.getElementById('chapterList');
+            if(sub.files.length === 0) { list.innerHTML = '<p style="text-align:center; opacity:0.6">No files yet.</p>'; return; }
+            let html = '';
+            sub.files.forEach(f => {
+                html += `<div class="chapter-item" onclick="openViewer('${f.file}')"><span class="chapter-title"><i class="fas fa-file-alt chapter-icon"></i> ${f.name}</span> <i class="fas fa-chevron-right" style="opacity:0.5"></i></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function showGrid() { document.getElementById('subjectsSection').style.display = 'block'; document.getElementById('chapterSection').style.display = 'none'; }
+        function openViewer(url) {
+            if(!url) return alert("Empty");
+            document.getElementById('viewerOverlay').style.display = 'block';
+            document.getElementById('contentFrame').src = url;
+            document.getElementById('sidebar').classList.remove('open');
+        }
+        function closeViewer() { document.getElementById('viewerOverlay').style.display = 'none'; document.getElementById('contentFrame').src = ''; }
+        function toggleSidebar() { const sb = document.getElementById('sidebar'); sb.classList.toggle('open'); document.getElementById('handleIcon').className = sb.classList.contains('open') ? "fas fa-chevron-right" : "fas fa-chevron-left"; }
+
+        // --- TIMER ---
         function startTimer(min, mode) {
-            stopTimer();
-            document.getElementById('timerMode').innerText = mode;
-            let sec = min * 60;
-            let totalMin = min;
-            updateTimeDisplay(sec);
-
+            stopTimer(); document.getElementById('timerMode').innerText = mode;
+            let sec = min * 60; let totalMin = min; updateTimeDisplay(sec);
             timerInterval = setInterval(() => {
-                sec--;
-                updateTimeDisplay(sec);
-
-                // Update Real-time Stats (every minute)
-                if(sec % 60 === 0) {
-                    dbData.stats.daily_min++;
-                    dbData.stats.milestone_done++;
-                    updateUI();
-                    sync();
-                }
-
+                sec--; updateTimeDisplay(sec);
+                if(sec % 60 === 0) { dbData.stats.daily_min++; dbData.stats.milestone_done++; updateUI(); sync(); }
                 if(sec <= 0) {
-                    stopTimer();
-                    document.getElementById('alarmSound').play();
-                    dbData.streak++;
-                    updateUI(); sync();
-                    
-                    document.getElementById('breakMessage').innerText = `${totalMin} minutes of focus completed.`;
+                    stopTimer(); document.getElementById('alarmSound').play(); dbData.streak++; updateUI(); sync();
+                    document.getElementById('breakMessage').innerText = `${totalMin} minutes completed.`;
                     document.getElementById('breakModal').style.display = 'flex';
                 }
             }, 1000);
         }
-
         function stopTimer() { clearInterval(timerInterval); updateTimeDisplay(0); document.getElementById('timerMode').innerText = "IDLE"; }
-        function updateTimeDisplay(sec) {
-            const m = Math.floor(sec/60).toString().padStart(2,'0');
-            const s = (sec%60).toString().padStart(2,'0');
-            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
-        }
-        function customTimer() {
-            let m = prompt("Enter duration (minutes):");
-            if(m && !isNaN(m)) startTimer(m, "CUSTOM FOCUS");
-        }
+        function updateTimeDisplay(sec) { const m = Math.floor(sec/60).toString().padStart(2,'0'); const s = (sec%60).toString().padStart(2,'0'); document.getElementById('timerDisplay').innerText = `${m}:${s}`; }
+        function customTimer() { let m = prompt("Minutes:"); if(m && !isNaN(m)) startTimer(m, "CUSTOM"); }
 
-        // --- NAVIGATION ---
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            sb.classList.toggle('open');
-            document.getElementById('handleIcon').className = sb.classList.contains('open') ? "fas fa-chevron-right" : "fas fa-chevron-left";
-        }
-
-        function openViewer(url) {
-            if(!url) return alert("No file available.");
-            document.getElementById('viewerOverlay').style.display = 'block';
-            document.getElementById('contentFrame').src = url;
-            document.getElementById('sidebar').classList.remove('open'); // Auto-hide sidebar
-        }
-        function closeViewer() {
-            document.getElementById('viewerOverlay').style.display = 'none';
-            document.getElementById('contentFrame').src = '';
-        }
-
-        // --- MILESTONE CONFIG ---
         function openMilestoneModal() { document.getElementById('milestoneModal').style.display = 'flex'; }
         function setMilestone() {
-            const name = document.getElementById('msNameIn').value;
-            const hours = document.getElementById('msTargetIn').value;
-            if(name && hours) {
-                dbData.stats.milestone_name = name;
-                dbData.stats.milestone_target = hours * 60; // hours to mins
-                dbData.stats.milestone_done = 0; // reset progress
-                sync(); updateUI();
-                document.getElementById('milestoneModal').style.display = 'none';
-            }
+            const name = document.getElementById('msNameIn').value; const hours = document.getElementById('msTargetIn').value;
+            if(name && hours) { dbData.stats.milestone_name = name; dbData.stats.milestone_target = hours * 60; dbData.stats.milestone_done = 0; sync(); updateUI(); document.getElementById('milestoneModal').style.display = 'none'; }
         }
-
         function saveNotes() { dbData.notes = document.getElementById('notesArea').value; sync(); }
         async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
-        
         supabaseClient.auth.onAuthStateChange((event, session) => { if (session) initApp(session.user); });
-
     </script>
 </body>
 </html>
