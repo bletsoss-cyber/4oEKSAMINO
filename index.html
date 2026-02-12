@@ -121,11 +121,14 @@
         .fab:hover { transform: scale(1.1); }
         .fab-sec { background: var(--card-dark); border: 1px solid var(--border); }
 
-        /* Theme Panel */
+        /* Theme Panel & Modals */
         .panel { position: fixed; bottom: 110px; right: 30px; width: 300px; background: var(--bg-dark); border: 1px solid var(--accent); border-radius: 20px; padding: 20px; display: none; z-index: 101; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
         .theme-btn { height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
         .theme-btn:hover { transform: scale(1.1); border-color: white; }
+
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-box { background: var(--card-dark); border: 1px solid var(--accent); padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; box-shadow: 0 0 50px var(--accent-glow); animation: slideUp 0.3s; }
 
         @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
         @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
@@ -241,10 +244,22 @@
         </div>
     </div>
 
+    <div id="breakModal" class="modal-bg">
+        <div class="modal-box">
+            <div style="font-size:3rem; margin-bottom:15px;">☕</div>
+            <h2 style="margin-bottom:10px;">Μπράβο!</h2>
+            <p id="breakMessage" style="font-size:1.1rem; opacity:0.9; margin-bottom:20px;"></p>
+            <p style="color:var(--accent); font-weight:bold; margin-bottom:30px;">Αξίζεις ένα καλό διάλειμμα.</p>
+            <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Συνέχεια</button>
+        </div>
+    </div>
+
+    <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
+
     <script>
         // --- CONFIG ---
-        const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
+        const SUPABASE_URL = "ΒΑΛΕ_ΕΔΩ_ΤΟ_URL";
+        const SUPABASE_KEY = "ΒΑΛΕ_ΕΔΩ_ΤΟ_ANON_KEY";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let dbData = null;
@@ -252,7 +267,7 @@
         let timerInterval = null;
 
         const subjects = [
-            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "test.html"}, {name: "Κεφ 2: Νευρικό", file: "test.html"}] },
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"}, {name: "Κεφ 2: Νευρικό", file: "notes/anatomy2.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [{name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html"}] },
             { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
             { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [] },
@@ -372,19 +387,27 @@
             stopTimer();
             document.getElementById('timerMode').innerText = modeName;
             let sec = min * 60;
+            let totalMin = min; // Save for message
             updateTime(sec);
             timerInterval = setInterval(() => {
                 sec--; updateTime(sec);
                 if(sec <= 0) {
-                    stopTimer(); alert("Session Complete!"); dbData.streak++; 
+                    stopTimer(); 
+                    document.getElementById('alarmSound').play();
+                    
+                    // SHOW NICE BREAK MODAL
+                    document.getElementById('breakMessage').innerText = `Ολοκλήρωσες ${totalMin} λεπτά συγκέντρωσης.`;
+                    document.getElementById('breakModal').style.display = 'flex';
+
+                    dbData.streak++; 
                     document.getElementById('streakCount').innerText = dbData.streak; sync();
                 }
             }, 1000);
         }
 
         function customTimer() {
-            let m = prompt("Enter minutes for custom session:");
-            if(m && !isNaN(m)) startTimer(m, "CUSTOM SESSION");
+            let m = prompt("Enter minutes:");
+            if(m && !isNaN(m)) startTimer(m, "CUSTOM");
         }
 
         function stopTimer() { clearInterval(timerInterval); updateTime(0); document.getElementById('timerMode').innerText = "READY"; }
