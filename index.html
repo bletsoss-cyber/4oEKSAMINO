@@ -3,132 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4o ΕΞΑΜΗΝΟ - Study</title>
+    <title>Uni Hub - Gamified</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. THEME VARIABLES --- */
+        /* --- THEME VARIABLES --- */
         :root {
-            /* DEEP PURPLE (Study Focus) */
-            --bg-dark: #1e1b4b;
-            --card-dark: rgba(30, 27, 75, 0.85);
+            --bg-dark: #130f25;
+            --card-dark: rgba(26, 22, 58, 0.85);
             --text-dark: #e0e7ff;
             --accent: #8b5cf6;
-            --accent-glow: rgba(139, 92, 246, 0.4);
-            --border: 1px solid rgba(255, 255, 255, 0.1);
-            --bg-gradient: radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.4), transparent 25%), 
-                           radial-gradient(circle at 85% 30%, rgba(124, 58, 237, 0.2), transparent 25%);
+            --accent-glow: rgba(139, 92, 246, 0.5);
+            --danger: #ef4444;
+            --success: #10b981;
+            --border: 1px solid rgba(255, 255, 255, 0.08);
+            --wallpaper: radial-gradient(circle at 10% 10%, rgba(76, 29, 149, 0.3), transparent 40%),
+                         radial-gradient(circle at 90% 90%, rgba(56, 189, 248, 0.15), transparent 40%);
         }
 
-        /* ALTERNATIVE THEMES */
-        [data-theme="ocean"] { --bg-dark: #0f172a; --accent: #38bdf8; --bg-gradient: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.3), transparent 40%); }
-        [data-theme="forest"] { --bg-dark: #052e16; --accent: #34d399; --bg-gradient: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.2), transparent 50%); }
-        [data-theme="midnight"] { --bg-dark: #000000; --accent: #ffffff; --bg-gradient: none; --card-dark: rgba(20,20,20,0.95); }
-
-        /* GLOBAL */
         body {
-            background-color: var(--bg-dark); background-image: var(--bg-gradient); background-attachment: fixed;
+            background-color: var(--bg-dark); background-image: var(--wallpaper); background-attachment: fixed;
             color: var(--text-dark); font-family: 'Outfit', sans-serif; margin: 0; padding: 0;
-            min-height: 100vh; overflow-x: hidden; transition: background 0.5s ease;
+            min-height: 100vh; overflow-x: hidden;
         }
-        * { box-sizing: border-box; transition: 0.3s; }
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+        /* --- UTILS --- */
+        .glass { background: var(--card-dark); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: var(--border); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; display: none; }
+        .btn-main { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-main:hover { box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-2px); }
 
         /* --- LOGIN --- */
-        .login-wrapper { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: var(--bg-dark); z-index: 2000; }
-        .login-box { background: var(--card-dark); padding: 40px; border-radius: 24px; width: 350px; text-align: center; border: var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-        .login-input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.05); border: var(--border); border-radius: 12px; color: white; outline: none; }
-        .login-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
-        .btn-main { width: 100%; padding: 12px; margin-top: 20px; background: var(--accent); border: none; color: white; font-weight: 700; border-radius: 12px; cursor: pointer; }
-        .btn-main:hover { box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-2px); }
+        .login-wrapper { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: #0f0c1a; z-index: 5000; }
+        .login-box { width: 350px; padding: 40px; text-align: center; }
+        .inp { width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 10px; color: white; outline: none; }
 
-        /* --- DASHBOARD --- */
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px; display: none; }
-        .hero { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 50px; animation: fadeIn 0.8s; }
-        .hero-card { background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 40px; position: relative; }
-        .todo-widget { background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 25px; display: flex; flex-direction: column; }
-        .todo-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-        /* --- GRID --- */
-        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; animation: slideUp 0.8s; }
-        .card {
-            background: var(--card-dark); border: var(--border); width: 280px; padding: 25px;
-            border-radius: 20px; cursor: pointer; text-align: center; position: relative; overflow: hidden;
+        /* --- HERO: BOSS & RINGS --- */
+        .gamification-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; margin-bottom: 40px; animation: fadeIn 0.8s;
         }
-        .card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        /* Motion Border Effect */
-        .card span { position: absolute; display: block; background: var(--accent); transition: 0.5s; }
-        .card span:nth-child(1) { top:0; left:0; width:0; height:2px; } .card:hover span:nth-child(1) { width:100%; }
-        .card span:nth-child(2) { top:0; right:0; width:2px; height:0; transition-delay:0.1s; } .card:hover span:nth-child(2) { height:100%; }
-        .card span:nth-child(3) { bottom:0; right:0; width:0; height:2px; transition-delay:0.2s; } .card:hover span:nth-child(3) { width:100%; }
-        .card span:nth-child(4) { bottom:0; left:0; width:2px; height:0; transition-delay:0.3s; } .card:hover span:nth-child(4) { height:100%; }
 
-        .icon-box { font-size: 2.5rem; margin-bottom: 15px; color: var(--accent); }
-
-        /* --- CHAPTER MENU --- */
-        .chapter-container { display: none; max-width: 800px; margin: 0 auto; animation: slideUp 0.5s; }
-        .chapter-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--card-dark); border: var(--border); padding: 15px 25px;
-            border-radius: 12px; cursor: pointer; margin-bottom: 10px;
-        }
-        .chapter-item:hover { border-color: var(--accent); transform: translateX(5px); background: rgba(255,255,255,0.05); }
-
-        /* --- VIEWER & SIDEBAR --- */
-        .viewer-overlay { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; }
-        iframe { width: 100%; height: 100%; border: none; background: white; }
+        /* BOSS CARD */
+        .boss-card { padding: 30px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .boss-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .boss-title { font-size: 1.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
         
+        .hp-container { width: 100%; height: 25px; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .hp-bar {
+            height: 100%; width: 100%;
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+            transition: width 1s linear;
+        }
+        .hp-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem; font-weight: 700; text-shadow: 0 1px 2px black; z-index: 2; pointer-events: none; }
+
+        .boss-stats { display: flex; gap: 15px; margin-top: 20px; opacity: 0.8; font-size: 0.9rem; }
+        .stat-badge { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+
+        /* RINGS CARD */
+        .rings-card { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .rings-wrapper { position: relative; width: 160px; height: 160px; }
+        
+        svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        circle { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s ease-in-out; }
+        .ring-bg { stroke: rgba(255,255,255,0.05); }
+        
+        .ring-1 { stroke: #3b82f6; filter: drop-shadow(0 0 4px #3b82f6); } /* Time */
+        .ring-2 { stroke: #8b5cf6; filter: drop-shadow(0 0 4px #8b5cf6); } /* Sessions */
+        .ring-3 { stroke: #10b981; filter: drop-shadow(0 0 4px #10b981); } /* Tasks */
+
+        .rings-legend { margin-top: 15px; display: flex; gap: 15px; font-size: 0.75rem; opacity: 0.8; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* --- SUBJECTS GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { padding: 25px; text-align: center; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(255,255,255,0.05); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--accent); }
+
+        /* --- GLOBAL TIMER SIDEBAR --- */
         .sidebar {
             position: fixed; top: 0; right: -380px; width: 380px; height: 100%;
-            background: rgba(15, 12, 41, 0.95); backdrop-filter: blur(20px);
-            border-left: 1px solid var(--accent); z-index: 3002; padding: 30px;
-            transition: right 0.4s ease; display: flex; flex-direction: column; gap: 20px;
+            background: rgba(19, 15, 37, 0.95); backdrop-filter: blur(25px);
+            border-left: 1px solid var(--accent); z-index: 4000; padding: 30px;
+            display: flex; flex-direction: column; gap: 20px; transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: -10px 0 50px rgba(0,0,0,0.8);
         }
         .sidebar.open { right: 0; }
-
+        
         .sidebar-handle {
             position: absolute; top: 50%; left: -40px; width: 40px; height: 100px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: rgba(255,255,255,0.1); background: transparent;
-            border-radius: 10px 0 0 10px; transition: 0.3s; transform: translateY(-50%);
+            cursor: pointer; color: rgba(255,255,255,0.1); transform: translateY(-50%);
+            border-radius: 10px 0 0 10px;
         }
-        .sidebar-handle:hover { color: white; background: var(--accent); box-shadow: -5px 0 15px var(--accent-glow); }
+        .sidebar-handle:hover { color: white; background: var(--accent); }
 
-        /* --- STUDY TIMER BUTTONS --- */
-        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; margin-bottom: 5px; color: var(--accent); text-shadow: 0 0 20px rgba(139,92,246,0.3); }
-        .timer-subtitle { text-align: center; font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .timer-list { display: flex; flex-direction: column; gap: 10px; }
+        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; color: var(--accent); text-shadow: 0 0 20px rgba(139,92,246,0.3); }
+        .timer-list { display: flex; flex-direction: column; gap: 8px; }
         .timer-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px 15px; border-radius: 12px; cursor: pointer; text-align: left;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent;
         }
-        .timer-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); transform: translateX(5px); }
-        .timer-btn div { display: flex; flex-direction: column; }
-        .timer-btn strong { font-size: 1rem; color: white; }
-        .timer-btn span { font-size: 0.8rem; opacity: 0.6; margin-top: 2px; }
-        .timer-btn .time-tag { font-weight: 800; color: var(--accent); font-size: 1.1rem; }
+        .timer-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
 
-        .notepad { width: 100%; height: 200px; background: rgba(0,0,0,0.3); border: var(--border); color: white; padding: 15px; border-radius: 12px; resize: none; outline: none; margin-top: 10px; }
-        
-        /* Floating Buttons */
-        .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 100; }
-        .fab { width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 10px 30px var(--accent-glow); }
-        .fab:hover { transform: scale(1.1); }
-        .fab-sec { background: var(--card-dark); border: 1px solid var(--border); }
+        /* --- MODALS --- */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #1a163a; border: 1px solid var(--accent); padding: 30px; border-radius: 20px; width: 350px; text-align: center; animation: slideUp 0.3s; }
 
-        /* Theme Panel & Modals */
-        .panel { position: fixed; bottom: 110px; right: 30px; width: 300px; background: var(--bg-dark); border: 1px solid var(--accent); border-radius: 20px; padding: 20px; display: none; z-index: 101; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-        .theme-btn { height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
-        .theme-btn:hover { transform: scale(1.1); border-color: white; }
-
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-box { background: var(--card-dark); border: 1px solid var(--accent); padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; box-shadow: 0 0 50px var(--accent-glow); animation: slideUp 0.3s; }
+        /* --- VIEWER --- */
+        .viewer-overlay { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+        .back-float { position: fixed; top: 20px; left: 20px; z-index: 3005; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 30px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
 
         @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
         @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
@@ -137,127 +128,129 @@
 <body>
 
     <div id="loginScreen" class="login-wrapper">
-        <div class="login-box">
-            <h2 style="margin-bottom:10px; color:var(--accent);">Uni Hub Pro</h2>
-            <div id="loginMsg" style="color:#ef4444; font-size:0.9rem; margin-bottom:10px;"></div>
-            <input type="email" id="email" class="login-input" placeholder="Email">
-            <input type="password" id="pass" class="login-input" placeholder="Password">
-            <button onclick="handleAuth()" class="btn-main" id="authBtn">Log In</button>
-            <p onclick="toggleAuthMode()" style="margin-top:15px; cursor:pointer; opacity:0.6; font-size:0.9rem;" id="toggleText">Create Account</p>
+        <div class="glass login-box">
+            <h2 style="margin-bottom:10px; color:var(--accent);">Uni Hub RPG</h2>
+            <div id="loginMsg" style="color:#ef4444; margin-bottom:10px;"></div>
+            <input type="email" id="email" class="inp" placeholder="Email">
+            <input type="password" id="pass" class="inp" placeholder="Password">
+            <button onclick="handleAuth()" class="btn-main" style="width:100%">START GAME</button>
+            <p onclick="toggleAuthMode()" style="margin-top:15px; cursor:pointer; opacity:0.6;">Create Character</p>
         </div>
     </div>
 
     <div id="mainContainer" class="container">
         
-        <div class="hero">
-            <div class="hero-card">
-                <button onclick="logout()" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:white; cursor:pointer;">Exit</button>
-                <h1>Hello, <span id="usernameDisp" style="color:var(--accent)">Stathis</span>.</h1>
-                <p style="margin-top:10px; opacity:0.7;">Let's master the material.</p>
-                <div style="margin-top:20px; font-weight:bold;"><i class="fas fa-fire" style="color:#f59e0b"></i> <span id="streakCount">0</span> Sessions</div>
-            </div>
+        <div class="gamification-grid">
             
-            <div class="todo-widget">
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <input type="text" id="todoIn" class="login-input" style="margin:0; padding:8px;" placeholder="Task...">
-                    <button onclick="addTodo()" class="btn-main" style="width:auto; margin:0; padding:0 15px;">+</button>
+            <div class="glass boss-card">
+                <div class="boss-header">
+                    <div>
+                        <div style="font-size:0.8rem; color:var(--danger); font-weight:700; margin-bottom:5px;">⚠️ ACTIVE RAID</div>
+                        <div class="boss-title" id="bossName">No Target</div>
+                    </div>
+                    <button class="btn-main" onclick="openBossModal()" style="font-size:0.8rem; padding:8px 15px;"><i class="fas fa-edit"></i> New Raid</button>
                 </div>
-                <div id="todoList" style="overflow-y:auto; max-height:150px;"></div>
-            </div>
-        </div>
-
-        <div id="subjectsSection">
-            <h3 style="margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">YOUR LIBRARY</h3>
-            <div id="subjectsGrid" class="grid"></div>
-        </div>
-
-        <div id="chapterSection" class="chapter-container">
-            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-                <button onclick="showGrid()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button>
-                <h2 id="chapterTitle">Title</h2>
-            </div>
-            <div id="chapterList"></div>
-        </div>
-
-    </div>
-
-    <div class="fab-container" id="dashFabs">
-        <div class="fab fab-sec" onclick="togglePanel('themePanel')"><i class="fas fa-palette"></i></div>
-    </div>
-
-    <div id="themePanel" class="panel">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span>Theme</span> <i class="fas fa-times" style="cursor:pointer;" onclick="togglePanel('themePanel')"></i>
-        </div>
-        <div class="theme-grid">
-            <div class="theme-btn" style="background:#8b5cf6" onclick="setTheme('default')"></div>
-            <div class="theme-btn" style="background:#38bdf8" onclick="setTheme('ocean')"></div>
-            <div class="theme-btn" style="background:#34d399" onclick="setTheme('forest')"></div>
-            <div class="theme-btn" style="background:#000000; border:1px solid #333;" onclick="setTheme('midnight')"></div>
-        </div>
-    </div>
-
-    <div id="viewerOverlay" class="viewer-overlay">
-        <div style="position:fixed; top:20px; left:20px; z-index:3005; background:rgba(0,0,0,0.7); padding:10px 20px; border-radius:30px; cursor:pointer;" onclick="closeViewer()">
-            <i class="fas fa-chevron-left"></i> Dashboard
-        </div>
-        <iframe id="contentFrame" src=""></iframe>
-
-        <div id="sidebar" class="sidebar">
-            <div class="sidebar-handle" onclick="toggleSidebar()">
-                <i class="fas fa-chevron-left" id="handleIcon"></i>
-            </div>
-
-            <div>
-                <div id="timerDisplay" class="timer-display">25:00</div>
-                <div id="timerMode" class="timer-subtitle">READY TO FOCUS</div>
                 
-                <div class="timer-list">
-                    <div class="timer-btn" onclick="startTimer(25, 'POMODORO')">
-                        <div><strong>Pomodoro</strong><span>High Intensity Focus</span></div>
-                        <div class="time-tag">25'</div>
-                    </div>
-                    <div class="timer-btn" onclick="startTimer(50, 'DEEP WORK')">
-                        <div><strong>Deep Work</strong><span>Complex Concepts</span></div>
-                        <div class="time-tag">50'</div>
-                    </div>
-                    <div class="timer-btn" onclick="startTimer(90, 'FLOW STATE')">
-                        <div><strong>Flow State</strong><span>Full Immersion</span></div>
-                        <div class="time-tag">90'</div>
-                    </div>
-                    <div class="timer-btn" onclick="startTimer(5, 'QUICK START')">
-                        <div><strong>Quick Start</strong><span>Beat Procrastination</span></div>
-                        <div class="time-tag">5'</div>
-                    </div>
-                    <div class="timer-btn" onclick="customTimer()">
-                        <div><strong>Custom</strong><span>Your Rules</span></div>
-                        <div class="time-tag"><i class="fas fa-cog"></i></div>
-                    </div>
+                <div class="hp-container">
+                    <div id="bossHpBar" class="hp-bar" style="width: 100%;"></div>
+                    <div class="hp-text"><span id="hpText">0</span> / <span id="hpMax">0</span> Hours Left</div>
                 </div>
-                <button class="btn-main" style="background:#ef4444; margin-top:15px;" onclick="stopTimer()">STOP SESSION</button>
+
+                <div class="boss-stats">
+                    <div class="stat-badge"><i class="fas fa-clock"></i> <span id="dailyMins">0</span>m Today</div>
+                    <div class="stat-badge"><i class="fas fa-fire" style="color:#fb923c"></i> <span id="streakCount">0</span> Streak</div>
+                </div>
             </div>
 
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:end;">
-                <span style="font-size:0.8rem; opacity:0.6; letter-spacing:1px;">ΣΗΜΕΙΩΣΕΙΣ</span>
-                <textarea id="notesArea" class="notepad" placeholder="Thoughts..." oninput="saveNotes()"></textarea>
+            <div class="glass rings-card">
+                <div class="rings-wrapper">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" class="ring-bg"></circle>
+                        <circle cx="50" cy="50" r="30" class="ring-bg"></circle>
+                        <circle cx="50" cy="50" r="20" class="ring-bg"></circle>
+                        
+                        <circle id="ringTime" cx="50" cy="50" r="40" class="ring-1" stroke-dasharray="251" stroke-dashoffset="251"></circle>
+                        <circle id="ringSess" cx="50" cy="50" r="30" class="ring-2" stroke-dasharray="188" stroke-dashoffset="188"></circle>
+                        <circle id="ringTask" cx="50" cy="50" r="20" class="ring-3" stroke-dasharray="125" stroke-dashoffset="125"></circle>
+                    </svg>
+                </div>
+                <div class="rings-legend">
+                    <div class="legend-item"><div class="dot" style="background:#3b82f6"></div> Time</div>
+                    <div class="legend-item"><div class="dot" style="background:#8b5cf6"></div> Sess</div>
+                    <div class="legend-item"><div class="dot" style="background:#10b981"></div> Task</div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom:20px; opacity:0.7;">MISSION SELECT</h3>
+        <div id="subjectsGrid" class="grid"></div>
+
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-handle" onclick="toggleSidebar()"><i class="fas fa-chevron-left" id="handleIcon"></i></div>
+
+        <div>
+            <div id="timerDisplay" class="timer-display">25:00</div>
+            <div id="timerMode" style="text-align:center; opacity:0.6; margin-bottom:20px; font-size:0.8rem;">READY</div>
+            
+            <div class="timer-list">
+                <div class="timer-btn" onclick="startTimer(25, 'POMODORO')">
+                    <div><strong>Pomodoro</strong><span>Intensity Focus</span></div><div style="font-weight:800; color:var(--accent)">25'</div>
+                </div>
+                <div class="timer-btn" onclick="startTimer(50, 'DEEP WORK')">
+                    <div><strong>Deep Work</strong><span>Complex Topics</span></div><div style="font-weight:800; color:var(--accent)">50'</div>
+                </div>
+                <div class="timer-btn" onclick="startTimer(90, 'FLOW STATE')">
+                    <div><strong>Flow State</strong><span>Immersion</span></div><div style="font-weight:800; color:var(--accent)">90'</div>
+                </div>
+                <div class="timer-btn" onclick="startTimer(5, 'QUICK START')">
+                    <div><strong>Quick Start</strong><span>Ignition</span></div><div style="font-weight:800; color:var(--accent)">5'</div>
+                </div>
+                <div class="timer-btn" onclick="customTimer()">
+                    <div><strong>Custom</strong><span>Manual</span></div><div><i class="fas fa-cog"></i></div>
+                </div>
+            </div>
+            <button class="btn-main" style="background:#ef4444; width:100%; margin-top:15px;" onclick="stopTimer()">ABORT MISSION</button>
+        </div>
+
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:end;">
+            <span style="font-size:0.8rem; opacity:0.6; margin-bottom:5px;">TACTICAL NOTES</span>
+            <textarea id="notesArea" class="notepad" placeholder="Log intel here..." oninput="saveNotes()"></textarea>
+        </div>
+    </div>
+
+    <div id="bossModal" class="modal-bg">
+        <div class="modal-box">
+            <h2 style="margin-bottom:20px;">⚔️ New Raid Target</h2>
+            <input type="text" id="bossNameIn" class="inp" placeholder="Boss Name (e.g. Anatomy Exam)">
+            <input type="number" id="bossHpIn" class="inp" placeholder="Target Hours (HP)">
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-main" style="background:#333" onclick="document.getElementById('bossModal').style.display='none'">Cancel</button>
+                <button class="btn-main" onclick="setNewBoss()">Confirm Target</button>
             </div>
         </div>
     </div>
 
     <div id="breakModal" class="modal-bg">
         <div class="modal-box">
-            <div style="font-size:3rem; margin-bottom:15px;">☕</div>
-            <h2 style="margin-bottom:10px;">Μπράβο Bro!</h2>
-            <p id="breakMessage" style="font-size:1.1rem; opacity:0.9; margin-bottom:20px;"></p>
-            <p style="color:var(--accent); font-weight:bold; margin-bottom:30px;">Αξίζεις ένα καλό διάλειμμα Bro.</p>
-            <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Συνέχεια</button>
+            <div style="font-size:3rem; margin-bottom:10px;">🛡️</div>
+            <h2 style="margin-bottom:10px;">Sector Cleared!</h2>
+            <p id="breakMessage" style="opacity:0.8; margin-bottom:20px;"></p>
+            <p style="color:var(--success); font-weight:bold; margin-bottom:20px;">+XP Gained. Rest & Recover.</p>
+            <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Continue</button>
         </div>
+    </div>
+
+    <div id="viewerOverlay" class="viewer-overlay">
+        <div class="back-float" onclick="closeViewer()"><i class="fas fa-chevron-left"></i> Base</div>
+        <iframe id="contentFrame" src=""></iframe>
     </div>
 
     <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
 
     <script>
-        // --- CONFIG ---
+        // --- 1. CONFIG ---
         const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
         const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -265,9 +258,10 @@
         let dbData = null;
         let isLoginMode = true;
         let timerInterval = null;
+        let activeSeconds = 0; // Tracks session time
 
         const subjects = [
-            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "test.html"}, {name: "Κεφ 2: Νευρικό", file: "notes/anatomy2.html"}] },
+            { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"}] },
             { id: 2, title: "Εμβρυολογία", icon: "fa-baby-carriage", files: [{name: "Κεφ 1: Γονιμοποίηση", file: "notes/embryo1.html"}] },
             { id: 3, title: "Ιατρική Γενετική", icon: "fa-dna", files: [] },
             { id: 4, title: "Οδοντική Χειρ.", icon: "fa-tooth", files: [] },
@@ -276,7 +270,7 @@
             { id: 7, title: "Προληπτική", icon: "fa-shield-virus", files: [] }
         ];
 
-        // --- AUTH ---
+        // --- 2. AUTH ---
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
@@ -289,7 +283,7 @@
                 } else {
                     const { error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) throw error;
-                    alert("Success! Log in."); toggleAuthMode();
+                    alert("Account created."); toggleAuthMode();
                 }
             } catch(e) { msg.innerText = e.message; }
         }
@@ -297,117 +291,119 @@
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
             document.getElementById('authBtn').innerText = isLoginMode ? "Log In" : "Create Account";
-            document.getElementById('toggleText').innerText = isLoginMode ? "Create Account" : "Log In";
         }
 
         async function initApp(user) {
             let { data } = await supabaseClient.from('profiles').select('*').eq('user_id', user.id).single();
             if(!data) {
-                const { data: newProf } = await supabaseClient.from('profiles').insert([{ user_id: user.id, streak: 0, theme: 'default', notes: '', todos: [] }]).select().single();
+                // Initial Profile with Stats
+                const { data: newProf } = await supabaseClient.from('profiles').insert([{ 
+                    user_id: user.id, streak: 0, theme: 'default', notes: '', 
+                    stats: { daily_min: 0, daily_sess: 0, boss_name: "Set Target", boss_hp: 0, boss_max: 10 }
+                }]).select().single();
                 data = newProf;
             }
             dbData = data;
+            
+            // Check if stats object exists (for old users), if not init it
+            if(!dbData.stats) dbData.stats = { daily_min: 0, daily_sess: 0, boss_name: "Set Target", boss_hp: 0, boss_max: 10 };
+
             document.getElementById('loginScreen').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
-            document.getElementById('dashFabs').style.display = 'flex';
-            document.getElementById('usernameDisp').innerText = user.email.split('@')[0];
-            document.getElementById('streakCount').innerText = dbData.streak;
-            document.getElementById('notesArea').value = dbData.notes || '';
-            setTheme(dbData.theme || 'default', false);
-            renderTodos();
+            
             renderSubjects();
+            updateGamificationUI();
+            document.getElementById('notesArea').value = dbData.notes || '';
         }
 
         async function sync() {
-            if(dbData) await supabaseClient.from('profiles').update({ streak: dbData.streak, theme: dbData.theme, notes: dbData.notes, todos: dbData.todos }).eq('user_id', dbData.user_id);
+            if(dbData) await supabaseClient.from('profiles').update({ 
+                streak: dbData.streak, notes: dbData.notes, stats: dbData.stats 
+            }).eq('user_id', dbData.user_id);
         }
 
-        // --- UI ---
-        function renderSubjects() {
-            const grid = document.getElementById('subjectsGrid');
-            let html = '';
-            subjects.forEach(s => {
-                html += `
-                <div class="card" onclick="openChapterMenu(${s.id})">
-                    <span></span><span></span><span></span><span></span>
-                    <div class="icon-box"><i class="fas ${s.icon}"></i></div>
-                    <h3>${s.title}</h3>
-                    <p style="opacity:0.6; margin-top:5px;">${s.files.length} Files</p>
-                </div>`;
-            });
-            grid.innerHTML = html;
+        // --- 3. GAMIFICATION LOGIC ---
+        function updateGamificationUI() {
+            const s = dbData.stats;
+            document.getElementById('streakCount').innerText = dbData.streak;
+            document.getElementById('dailyMins').innerText = s.daily_min;
+
+            // Update Boss UI
+            document.getElementById('bossName').innerText = s.boss_name;
+            document.getElementById('hpText').innerText = (s.boss_hp / 60).toFixed(1); // Show Hours
+            document.getElementById('hpMax').innerText = (s.boss_max / 60).toFixed(0); 
+            
+            const hpPercent = (s.boss_hp / s.boss_max) * 100;
+            const bar = document.getElementById('bossHpBar');
+            bar.style.width = `${hpPercent}%`;
+            
+            // Color Change based on HP
+            if(hpPercent > 50) bar.style.background = "linear-gradient(90deg, #ef4444, #f87171)"; // Red
+            else if(hpPercent > 20) bar.style.background = "linear-gradient(90deg, #f59e0b, #fbbf24)"; // Orange
+            else bar.style.background = "linear-gradient(90deg, #10b981, #34d399)"; // Green (Kill range)
+
+            // Update Rings UI
+            // Targets: Time=240m (4h), Sess=4, Tasks=N/A (using hardcoded 5 for ring)
+            const r1 = 251 - (Math.min(s.daily_min, 240) / 240) * 251;
+            const r2 = 188 - (Math.min(s.daily_sess, 4) / 4) * 188;
+            
+            document.getElementById('ringTime').style.strokeDashoffset = r1;
+            document.getElementById('ringSess').style.strokeDashoffset = r2;
         }
 
-        function openChapterMenu(id) {
-            const sub = subjects.find(s => s.id === id);
-            document.getElementById('subjectsSection').style.display = 'none';
-            document.getElementById('chapterSection').style.display = 'block';
-            document.getElementById('chapterTitle').innerText = sub.title;
-            const list = document.getElementById('chapterList');
-            if(sub.files.length === 0) { list.innerHTML = '<p>No files yet.</p>'; return; }
-            let html = '';
-            sub.files.forEach(f => {
-                html += `<div class="chapter-item" onclick="openViewer('${f.file}')"><span>${f.name}</span> <i class="fas fa-chevron-right" style="opacity:0.5"></i></div>`;
-            });
-            list.innerHTML = html;
+        function openBossModal() { document.getElementById('bossModal').style.display = 'flex'; }
+
+        function setNewBoss() {
+            const name = document.getElementById('bossNameIn').value;
+            const hours = document.getElementById('bossHpIn').value;
+            if(name && hours) {
+                dbData.stats.boss_name = name;
+                dbData.stats.boss_max = hours * 60; // Convert to mins
+                dbData.stats.boss_hp = hours * 60; // Full HP
+                sync();
+                updateGamificationUI();
+                document.getElementById('bossModal').style.display = 'none';
+            }
         }
 
-        function showGrid() {
-            document.getElementById('subjectsSection').style.display = 'block';
-            document.getElementById('chapterSection').style.display = 'none';
-        }
-
-        function openViewer(url) {
-            document.getElementById('viewerOverlay').style.display = 'block';
-            document.getElementById('contentFrame').src = url;
-            document.getElementById('dashFabs').style.display = 'none';
-            document.getElementById('sidebar').classList.remove('open');
-        }
-
-        function closeViewer() {
-            document.getElementById('viewerOverlay').style.display = 'none';
-            document.getElementById('contentFrame').src = '';
-            document.getElementById('dashFabs').style.display = 'flex';
-            stopTimer();
-        }
-
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            sb.classList.toggle('open');
-            document.getElementById('handleIcon').className = sb.classList.contains('open') ? "fas fa-chevron-right" : "fas fa-chevron-left";
-        }
-
-        function togglePanel(id) {
-            const p = document.getElementById(id);
-            p.style.display = p.style.display === 'block' ? 'none' : 'block';
-        }
-
-        // --- TIMER LOGIC ---
+        // --- 4. TIMER LOGIC (Updates Stats) ---
         function startTimer(min, modeName) {
             stopTimer();
             document.getElementById('timerMode').innerText = modeName;
             let sec = min * 60;
-            let totalMin = min; // Save for message
+            let initialSec = sec;
             updateTime(sec);
+            
             timerInterval = setInterval(() => {
-                sec--; updateTime(sec);
+                sec--; 
+                updateTime(sec);
+                
+                // Real-time Update every minute
+                if(sec % 60 === 0) {
+                    dbData.stats.daily_min++;
+                    if(dbData.stats.boss_hp > 0) dbData.stats.boss_hp--;
+                    updateGamificationUI();
+                    sync(); // Sync to cloud
+                }
+
                 if(sec <= 0) {
                     stopTimer(); 
                     document.getElementById('alarmSound').play();
                     
-                    // SHOW NICE BREAK MODAL
-                    document.getElementById('breakMessage').innerText = `Ολοκλήρωσες ${totalMin} λεπτά συγκέντρωσης.`;
-                    document.getElementById('breakModal').style.display = 'flex';
+                    dbData.stats.daily_sess++;
+                    dbData.streak++;
+                    sync();
+                    updateGamificationUI();
 
-                    dbData.streak++; 
-                    document.getElementById('streakCount').innerText = dbData.streak; sync();
+                    document.getElementById('breakMessage').innerText = `Session Complete. Boss took damage.`;
+                    document.getElementById('breakModal').style.display = 'flex';
                 }
             }, 1000);
         }
 
         function customTimer() {
-            let m = prompt("Enter minutes:");
-            if(m && !isNaN(m)) startTimer(m, "CUSTOM");
+            let m = prompt("Enter Minutes:");
+            if(m) startTimer(m, "CUSTOM RAID");
         }
 
         function stopTimer() { clearInterval(timerInterval); updateTime(0); document.getElementById('timerMode').innerText = "READY"; }
@@ -417,30 +413,35 @@
             document.getElementById('timerDisplay').innerText = `${m}:${s}`;
         }
 
-        // --- UTILS ---
-        function addTodo() {
-            const v = document.getElementById('todoIn').value;
-            if(!v) return;
-            if(!dbData.todos) dbData.todos = [];
-            dbData.todos.push(v);
-            document.getElementById('todoIn').value = ''; renderTodos(); sync();
-        }
-        function renderTodos() {
-            const l = document.getElementById('todoList'); l.innerHTML = '';
-            if(dbData.todos) dbData.todos.forEach((t,i) => {
-                l.innerHTML += `<div class="todo-item"><span>${t}</span><i class="fas fa-trash" style="cursor:pointer; opacity:0.5" onclick="delTodo(${i})"></i></div>`;
+        // --- 5. NAVIGATION ---
+        function renderSubjects() {
+            const grid = document.getElementById('subjectsGrid');
+            let html = '';
+            subjects.forEach(s => {
+                html += `<div class="glass card" onclick="openViewer('${s.files.length>0?s.files[0].file:''}')"><div class="icon-box"><i class="fas ${s.icon}"></i></div><h3>${s.title}</h3></div>`;
             });
+            grid.innerHTML = html;
         }
-        function delTodo(i) { dbData.todos.splice(i,1); renderTodos(); sync(); }
+
+        function openViewer(url) {
+            if(!url) return alert("Empty Folder");
+            document.getElementById('viewerOverlay').style.display = 'block';
+            document.getElementById('contentFrame').src = url;
+            document.getElementById('sidebar').classList.remove('open');
+        }
+        function closeViewer() {
+            document.getElementById('viewerOverlay').style.display = 'none';
+            document.getElementById('contentFrame').src = '';
+        }
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            sb.classList.toggle('open');
+            document.getElementById('handleIcon').className = sb.classList.contains('open') ? "fas fa-chevron-right" : "fas fa-chevron-left";
+        }
         function saveNotes() { dbData.notes = document.getElementById('notesArea').value; sync(); }
-        function setTheme(t, save = true) {
-            document.body.setAttribute('data-theme', t);
-            if(save && dbData) { dbData.theme = t; sync(); }
-        }
 
-        async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+        // --- INIT ---
         supabaseClient.auth.onAuthStateChange((event, session) => { if (session) initApp(session.user); });
-
     </script>
 </body>
 </html>
