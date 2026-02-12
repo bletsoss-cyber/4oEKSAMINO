@@ -3,124 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uni Hub - Gamified</title>
+    <title>Uni Hub - Professional Edition</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- 1. THEME VARIABLES (V17/V25 STYLE) --- */
         :root {
-            --bg-dark: #130f25;
-            --card-dark: rgba(26, 22, 58, 0.85);
+            --bg-dark: #1e1b4b; /* Indigo 950 */
+            --card-dark: rgba(30, 27, 75, 0.9);
             --text-dark: #e0e7ff;
-            --accent: #8b5cf6;
-            --accent-glow: rgba(139, 92, 246, 0.5);
-            --danger: #ef4444;
-            --success: #10b981;
-            --border: 1px solid rgba(255, 255, 255, 0.08);
-            --wallpaper: radial-gradient(circle at 10% 10%, rgba(76, 29, 149, 0.3), transparent 40%),
-                         radial-gradient(circle at 90% 90%, rgba(56, 189, 248, 0.15), transparent 40%);
+            --text-muted: #94a3b8;
+            --accent: #8b5cf6; /* Violet 500 */
+            --accent-glow: rgba(139, 92, 246, 0.4);
+            --border: 1px solid rgba(255, 255, 255, 0.1);
+            --bg-gradient: radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.3), transparent 25%), 
+                           radial-gradient(circle at 85% 30%, rgba(124, 58, 237, 0.15), transparent 25%);
+            --progress-bg: rgba(255,255,255,0.1);
+            --progress-fill: linear-gradient(90deg, #8b5cf6, #a78bfa);
         }
 
+        /* GLOBAL SETUP */
         body {
-            background-color: var(--bg-dark); background-image: var(--wallpaper); background-attachment: fixed;
-            color: var(--text-dark); font-family: 'Outfit', sans-serif; margin: 0; padding: 0;
-            min-height: 100vh; overflow-x: hidden;
+            background-color: var(--bg-dark);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            font-family: 'Outfit', sans-serif;
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        * { box-sizing: border-box; transition: all 0.3s ease; }
 
-        /* --- UTILS --- */
-        .glass { background: var(--card-dark); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: var(--border); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px; display: none; }
-        .btn-main { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; }
-        .btn-main:hover { box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-2px); }
+        /* --- LOGIN (Professional) --- */
+        .login-wrapper { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: var(--bg-dark); z-index: 5000; }
+        .login-box { background: var(--card-dark); padding: 40px; border-radius: 24px; width: 380px; text-align: center; border: var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .login-input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.05); border: var(--border); border-radius: 8px; color: white; outline: none; }
+        .login-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+        .btn-main { width: 100%; padding: 12px; margin-top: 15px; background: var(--accent); border: none; color: white; font-weight: 600; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
+        .btn-main:hover { box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-1px); }
 
-        /* --- LOGIN --- */
-        .login-wrapper { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: #0f0c1a; z-index: 5000; }
-        .login-box { width: 350px; padding: 40px; text-align: center; }
-        .inp { width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 10px; color: white; outline: none; }
-
-        /* --- HERO: BOSS & RINGS --- */
-        .gamification-grid {
-            display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; margin-bottom: 40px; animation: fadeIn 0.8s;
+        /* --- LAYOUT --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; display: none; }
+        
+        .hero-section {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; animation: fadeIn 0.8s;
         }
 
-        /* BOSS CARD */
-        .boss-card { padding: 30px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
-        .boss-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .boss-title { font-size: 1.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-        
-        .hp-container { width: 100%; height: 25px; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; }
-        .hp-bar {
-            height: 100%; width: 100%;
-            background: linear-gradient(90deg, #ef4444, #f87171);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
-            transition: width 1s linear;
+        /* MAIN DASHBOARD CARD */
+        .hero-card {
+            background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 35px;
+            position: relative; display: flex; flex-direction: column; justify-content: space-between;
         }
-        .hp-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem; font-weight: 700; text-shadow: 0 1px 2px black; z-index: 2; pointer-events: none; }
-
-        .boss-stats { display: flex; gap: 15px; margin-top: 20px; opacity: 0.8; font-size: 0.9rem; }
-        .stat-badge { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
-
-        /* RINGS CARD */
-        .rings-card { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .rings-wrapper { position: relative; width: 160px; height: 160px; }
+        .hero-title { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
+        .hero-subtitle { color: var(--text-muted); font-size: 1rem; }
         
-        svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-        circle { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s ease-in-out; }
-        .ring-bg { stroke: rgba(255,255,255,0.05); }
-        
-        .ring-1 { stroke: #3b82f6; filter: drop-shadow(0 0 4px #3b82f6); } /* Time */
-        .ring-2 { stroke: #8b5cf6; filter: drop-shadow(0 0 4px #8b5cf6); } /* Sessions */
-        .ring-3 { stroke: #10b981; filter: drop-shadow(0 0 4px #10b981); } /* Tasks */
+        /* MILESTONE WIDGET (The "Hidden" Stimulus) */
+        .milestone-widget {
+            margin-top: 30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: var(--border);
+        }
+        .milestone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .milestone-title { font-size: 0.9rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .milestone-edit { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
+        .milestone-edit:hover { color: white; }
 
-        .rings-legend { margin-top: 15px; display: flex; gap: 15px; font-size: 0.75rem; opacity: 0.8; }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .progress-container { width: 100%; height: 8px; background: var(--progress-bg); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-bar { height: 100%; background: var(--progress-fill); width: 0%; transition: width 1s ease; }
+        .progress-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
+
+        /* STATS CARD (Right Side) */
+        .stats-card {
+            background: var(--card-dark); border: var(--border); border-radius: 24px; padding: 30px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .stat-item { display: flex; align-items: center; gap: 15px; }
+        .stat-icon { width: 45px; height: 45px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.2rem; }
+        .stat-info h4 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+        .stat-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
         /* --- SUBJECTS GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .card { padding: 25px; text-align: center; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(255,255,255,0.05); }
-        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--accent); }
+        .grid-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 50px; animation: slideUp 0.8s; }
+        
+        .card {
+            background: var(--card-dark); border: var(--border); padding: 30px; border-radius: 20px;
+            cursor: pointer; position: relative; overflow: hidden; text-align: center;
+            display: flex; flex-direction: column; align-items: center; height: 220px;
+        }
+        /* The Clean Hover Effect */
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 20px; color: var(--accent); opacity: 0.9; }
+        .card h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
+        .card p { font-size: 0.9rem; color: var(--text-muted); }
 
-        /* --- GLOBAL TIMER SIDEBAR --- */
+        /* --- GLOBAL SIDEBAR (The Timer) --- */
         .sidebar {
             position: fixed; top: 0; right: -380px; width: 380px; height: 100%;
-            background: rgba(19, 15, 37, 0.95); backdrop-filter: blur(25px);
-            border-left: 1px solid var(--accent); z-index: 4000; padding: 30px;
-            display: flex; flex-direction: column; gap: 20px; transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -10px 0 50px rgba(0,0,0,0.8);
+            background: rgba(19, 15, 37, 0.98); border-left: 1px solid var(--accent);
+            z-index: 4000; padding: 30px; display: flex; flex-direction: column; gap: 25px;
+            box-shadow: -10px 0 50px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .sidebar.open { right: 0; }
-        
+
         .sidebar-handle {
-            position: absolute; top: 50%; left: -40px; width: 40px; height: 100px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: rgba(255,255,255,0.1); transform: translateY(-50%);
-            border-radius: 10px 0 0 10px;
+            position: absolute; top: 50%; left: -30px; width: 30px; height: 80px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            background: transparent; border-radius: 10px 0 0 10px; transition: 0.2s;
         }
-        .sidebar-handle:hover { color: white; background: var(--accent); }
+        .sidebar-handle:hover { background: var(--accent); color: white; }
+        .sidebar-handle i { color: rgba(255,255,255,0.3); font-size: 0.9rem; }
+        .sidebar-handle:hover i { color: white; }
 
-        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; color: var(--accent); text-shadow: 0 0 20px rgba(139,92,246,0.3); }
-        .timer-list { display: flex; flex-direction: column; gap: 8px; }
+        /* TIMER UI */
+        .timer-display { font-size: 4rem; font-weight: 300; text-align: center; color: white; margin-bottom: 5px; font-variant-numeric: tabular-nums; }
+        .timer-status { text-align: center; color: var(--accent); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; }
+        
+        .timer-options { display: flex; flex-direction: column; gap: 10px; }
         .timer-btn {
-            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 15px; border-radius: 10px; cursor: pointer; text-align: left;
+            display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
         }
-        .timer-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
+        .timer-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); }
+        .timer-btn strong { font-size: 0.95rem; font-weight: 500; }
+        .timer-btn span { font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 2px; }
+        .timer-btn .tag { font-weight: 700; color: var(--accent); font-size: 1rem; }
 
-        /* --- MODALS --- */
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #1a163a; border: 1px solid var(--accent); padding: 30px; border-radius: 20px; width: 350px; text-align: center; animation: slideUp 0.3s; }
+        /* NOTEPAD */
+        .notepad {
+            flex: 1; background: rgba(0,0,0,0.3); border: var(--border); border-radius: 12px;
+            color: var(--text-dark); padding: 15px; resize: none; outline: none; font-size: 0.95rem; line-height: 1.6;
+        }
+        .notepad:focus { border-color: var(--accent); }
 
-        /* --- VIEWER --- */
+        /* --- MODALS & VIEWER --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 6000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-dark); border: 1px solid var(--accent); padding: 35px; border-radius: 20px; width: 400px; text-align: center; animation: slideUp 0.3s; }
+        
         .viewer-overlay { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; }
         iframe { width: 100%; height: 100%; border: none; background: white; }
-        .back-float { position: fixed; top: 20px; left: 20px; z-index: 3005; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 30px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+        .back-float { position: fixed; top: 25px; left: 25px; z-index: 3005; background: rgba(30, 27, 75, 0.8); color: white; padding: 10px 20px; border-radius: 30px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem; backdrop-filter: blur(10px); }
+        .back-float:hover { background: var(--accent); border-color: var(--accent); }
 
+        /* ANIMATIONS */
         @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
         @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
     </style>
@@ -128,129 +156,135 @@
 <body>
 
     <div id="loginScreen" class="login-wrapper">
-        <div class="glass login-box">
-            <h2 style="margin-bottom:10px; color:var(--accent);">Uni Hub RPG</h2>
-            <div id="loginMsg" style="color:#ef4444; margin-bottom:10px;"></div>
-            <input type="email" id="email" class="inp" placeholder="Email">
-            <input type="password" id="pass" class="inp" placeholder="Password">
-            <button onclick="handleAuth()" class="btn-main" style="width:100%">START GAME</button>
-            <p onclick="toggleAuthMode()" style="margin-top:15px; cursor:pointer; opacity:0.6;">Create Character</p>
+        <div class="login-box">
+            <h2 style="margin-bottom:10px; font-weight:600; letter-spacing:1px;">Uni Hub Pro</h2>
+            <div id="loginMsg" style="color:#ef4444; margin-bottom:15px; font-size:0.9rem; min-height:20px;"></div>
+            <input type="email" id="email" class="login-input" placeholder="Email Address">
+            <input type="password" id="pass" class="login-input" placeholder="Password">
+            <button onclick="handleAuth()" class="btn-main">Log In</button>
+            <p onclick="toggleAuthMode()" style="margin-top:20px; cursor:pointer; font-size:0.85rem; color:var(--text-muted);">New Account</p>
         </div>
     </div>
 
     <div id="mainContainer" class="container">
         
-        <div class="gamification-grid">
+        <div class="hero-section">
             
-            <div class="glass boss-card">
-                <div class="boss-header">
-                    <div>
-                        <div style="font-size:0.8rem; color:var(--danger); font-weight:700; margin-bottom:5px;">⚠️ ACTIVE RAID</div>
-                        <div class="boss-title" id="bossName">No Target</div>
-                    </div>
-                    <button class="btn-main" onclick="openBossModal()" style="font-size:0.8rem; padding:8px 15px;"><i class="fas fa-edit"></i> New Raid</button>
-                </div>
-                
-                <div class="hp-container">
-                    <div id="bossHpBar" class="hp-bar" style="width: 100%;"></div>
-                    <div class="hp-text"><span id="hpText">0</span> / <span id="hpMax">0</span> Hours Left</div>
+            <div class="hero-card">
+                <div>
+                    <button onclick="logout()" style="float:right; background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+                    <div class="hero-title">Welcome, <span id="usernameDisp" style="color:var(--accent)">Stathis</span>.</div>
+                    <div class="hero-subtitle">Let's maintain focus today.</div>
                 </div>
 
-                <div class="boss-stats">
-                    <div class="stat-badge"><i class="fas fa-clock"></i> <span id="dailyMins">0</span>m Today</div>
-                    <div class="stat-badge"><i class="fas fa-fire" style="color:#fb923c"></i> <span id="streakCount">0</span> Streak</div>
+                <div class="milestone-widget">
+                    <div class="milestone-header">
+                        <span class="milestone-title"><i class="fas fa-flag"></i> Current Milestone</span>
+                        <button class="milestone-edit" onclick="openMilestoneModal()"><i class="fas fa-cog"></i> Config</button>
+                    </div>
+                    <div style="font-size:1.1rem; font-weight:600; margin-bottom:5px;" id="milestoneName">No Active Goal</div>
+                    
+                    <div class="progress-container">
+                        <div id="milestoneBar" class="progress-bar"></div>
+                    </div>
+                    
+                    <div class="progress-stats">
+                        <span><span id="milestoneCurrent">0</span> hrs done</span>
+                        <span>Target: <span id="milestoneTarget">0</span> hrs</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="glass rings-card">
-                <div class="rings-wrapper">
-                    <svg viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" class="ring-bg"></circle>
-                        <circle cx="50" cy="50" r="30" class="ring-bg"></circle>
-                        <circle cx="50" cy="50" r="20" class="ring-bg"></circle>
-                        
-                        <circle id="ringTime" cx="50" cy="50" r="40" class="ring-1" stroke-dasharray="251" stroke-dashoffset="251"></circle>
-                        <circle id="ringSess" cx="50" cy="50" r="30" class="ring-2" stroke-dasharray="188" stroke-dashoffset="188"></circle>
-                        <circle id="ringTask" cx="50" cy="50" r="20" class="ring-3" stroke-dasharray="125" stroke-dashoffset="125"></circle>
-                    </svg>
+            <div class="stats-card">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                    <div class="stat-info">
+                        <h4 id="streakCount">0</h4>
+                        <p>Day Streak</p>
+                    </div>
                 </div>
-                <div class="rings-legend">
-                    <div class="legend-item"><div class="dot" style="background:#3b82f6"></div> Time</div>
-                    <div class="legend-item"><div class="dot" style="background:#8b5cf6"></div> Sess</div>
-                    <div class="legend-item"><div class="dot" style="background:#10b981"></div> Task</div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <h4 id="todayMins">0</h4>
+                        <p>Minutes Today</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <h3 style="margin-bottom:20px; opacity:0.7;">MISSION SELECT</h3>
+        <div class="grid-header">LIBRARY</div>
         <div id="subjectsGrid" class="grid"></div>
 
     </div>
 
     <div id="sidebar" class="sidebar">
-        <div class="sidebar-handle" onclick="toggleSidebar()"><i class="fas fa-chevron-left" id="handleIcon"></i></div>
+        <div class="sidebar-handle" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left" id="handleIcon"></i>
+        </div>
 
         <div>
             <div id="timerDisplay" class="timer-display">25:00</div>
-            <div id="timerMode" style="text-align:center; opacity:0.6; margin-bottom:20px; font-size:0.8rem;">READY</div>
+            <div id="timerMode" class="timer-status">IDLE</div>
             
-            <div class="timer-list">
+            <div class="timer-options">
                 <div class="timer-btn" onclick="startTimer(25, 'POMODORO')">
-                    <div><strong>Pomodoro</strong><span>Intensity Focus</span></div><div style="font-weight:800; color:var(--accent)">25'</div>
+                    <div><strong>Pomodoro</strong><span>Standard Focus</span></div><div class="tag">25</div>
                 </div>
                 <div class="timer-btn" onclick="startTimer(50, 'DEEP WORK')">
-                    <div><strong>Deep Work</strong><span>Complex Topics</span></div><div style="font-weight:800; color:var(--accent)">50'</div>
+                    <div><strong>Deep Work</strong><span>Intensive Session</span></div><div class="tag">50</div>
                 </div>
                 <div class="timer-btn" onclick="startTimer(90, 'FLOW STATE')">
-                    <div><strong>Flow State</strong><span>Immersion</span></div><div style="font-weight:800; color:var(--accent)">90'</div>
+                    <div><strong>Flow State</strong><span>Full Immersion</span></div><div class="tag">90</div>
                 </div>
                 <div class="timer-btn" onclick="startTimer(5, 'QUICK START')">
-                    <div><strong>Quick Start</strong><span>Ignition</span></div><div style="font-weight:800; color:var(--accent)">5'</div>
+                    <div><strong>Quick Start</strong><span>Warm Up</span></div><div class="tag">05</div>
                 </div>
                 <div class="timer-btn" onclick="customTimer()">
-                    <div><strong>Custom</strong><span>Manual</span></div><div><i class="fas fa-cog"></i></div>
+                    <div><strong>Custom</strong><span>Set duration</span></div><div><i class="fas fa-ellipsis-h" style="color:var(--accent)"></i></div>
                 </div>
             </div>
-            <button class="btn-main" style="background:#ef4444; width:100%; margin-top:15px;" onclick="stopTimer()">ABORT MISSION</button>
+            
+            <button class="btn-main" style="background:#ef4444; width:100%; margin-top:20px;" onclick="stopTimer()">End Session</button>
         </div>
 
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:end;">
-            <span style="font-size:0.8rem; opacity:0.6; margin-bottom:5px;">TACTICAL NOTES</span>
-            <textarea id="notesArea" class="notepad" placeholder="Log intel here..." oninput="saveNotes()"></textarea>
-        </div>
-    </div>
-
-    <div id="bossModal" class="modal-bg">
-        <div class="modal-box">
-            <h2 style="margin-bottom:20px;">⚔️ New Raid Target</h2>
-            <input type="text" id="bossNameIn" class="inp" placeholder="Boss Name (e.g. Anatomy Exam)">
-            <input type="number" id="bossHpIn" class="inp" placeholder="Target Hours (HP)">
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-main" style="background:#333" onclick="document.getElementById('bossModal').style.display='none'">Cancel</button>
-                <button class="btn-main" onclick="setNewBoss()">Confirm Target</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="breakModal" class="modal-bg">
-        <div class="modal-box">
-            <div style="font-size:3rem; margin-bottom:10px;">🛡️</div>
-            <h2 style="margin-bottom:10px;">Sector Cleared!</h2>
-            <p id="breakMessage" style="opacity:0.8; margin-bottom:20px;"></p>
-            <p style="color:var(--success); font-weight:bold; margin-bottom:20px;">+XP Gained. Rest & Recover.</p>
-            <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Continue</button>
+        <div style="flex:1; display:flex; flex-direction:column;">
+            <div style="margin-bottom:10px; font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Notes</div>
+            <textarea id="notesArea" class="notepad" placeholder="Capture ideas..." oninput="saveNotes()"></textarea>
         </div>
     </div>
 
     <div id="viewerOverlay" class="viewer-overlay">
-        <div class="back-float" onclick="closeViewer()"><i class="fas fa-chevron-left"></i> Base</div>
+        <div class="back-float" onclick="closeViewer()"><i class="fas fa-arrow-left"></i> Dashboard</div>
         <iframe id="contentFrame" src=""></iframe>
+    </div>
+
+    <div id="milestoneModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom:20px;">Set Weekly Milestone</h3>
+            <input type="text" id="msNameIn" class="login-input" placeholder="Goal Name (e.g. Anatomy Exam)">
+            <input type="number" id="msTargetIn" class="login-input" placeholder="Target Hours">
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-main" style="background:transparent; border:1px solid #555;" onclick="document.getElementById('milestoneModal').style.display='none'">Cancel</button>
+                <button class="btn-main" onclick="setMilestone()">Save Goal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="breakModal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="font-size:3rem; margin-bottom:15px;">🍵</div>
+            <h2 style="margin-bottom:10px;">Session Complete</h2>
+            <p id="breakMessage" style="color:var(--text-muted); margin-bottom:25px;"></p>
+            <p style="color:var(--accent); font-weight:600; margin-bottom:25px;">Take a break. Recovery is part of performance.</p>
+            <button class="btn-main" onclick="document.getElementById('breakModal').style.display='none'">Continue</button>
+        </div>
     </div>
 
     <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3"></audio>
 
     <script>
-        // --- 1. CONFIG ---
+        // --- CONFIGURATION ---
         const SUPABASE_URL = "https://erlrbwdyyzmiurchioww.supabase.co";
         const SUPABASE_KEY = "sb_publishable_ieGge-_M4YtVCicJYHKZfA_A-NWznrv";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -258,7 +292,6 @@
         let dbData = null;
         let isLoginMode = true;
         let timerInterval = null;
-        let activeSeconds = 0; // Tracks session time
 
         const subjects = [
             { id: 1, title: "Ανατομία III", icon: "fa-skull", files: [{name: "Κεφ 1: Εισαγωγή", file: "notes/anatomy1.html"}] },
@@ -270,12 +303,12 @@
             { id: 7, title: "Προληπτική", icon: "fa-shield-virus", files: [] }
         ];
 
-        // --- 2. AUTH ---
+        // --- AUTH ---
         async function handleAuth() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('pass').value;
-            const msg = document.getElementById('loginMsg');
-            if(!email || !password) return msg.innerText = "Fill fields";
+            if(!email || !password) return alert("Please fill all fields.");
+            
             try {
                 if(isLoginMode) {
                     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
@@ -283,37 +316,38 @@
                 } else {
                     const { error } = await supabaseClient.auth.signUp({ email, password });
                     if(error) throw error;
-                    alert("Account created."); toggleAuthMode();
+                    alert("Account created. Please log in."); toggleAuthMode();
                 }
-            } catch(e) { msg.innerText = e.message; }
+            } catch(e) { alert(e.message); }
         }
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
-            document.getElementById('authBtn').innerText = isLoginMode ? "Log In" : "Create Account";
+            document.querySelector('.btn-main').innerText = isLoginMode ? "LOG IN" : "CREATE ACCOUNT";
         }
 
+        // --- INIT ---
         async function initApp(user) {
+            // Fetch Profile + Stats
             let { data } = await supabaseClient.from('profiles').select('*').eq('user_id', user.id).single();
             if(!data) {
-                // Initial Profile with Stats
+                // Default structure if new
                 const { data: newProf } = await supabaseClient.from('profiles').insert([{ 
-                    user_id: user.id, streak: 0, theme: 'default', notes: '', 
-                    stats: { daily_min: 0, daily_sess: 0, boss_name: "Set Target", boss_hp: 0, boss_max: 10 }
+                    user_id: user.id, streak: 0, notes: '', 
+                    stats: { daily_min: 0, milestone_name: "Set Goal", milestone_done: 0, milestone_target: 10 }
                 }]).select().single();
                 data = newProf;
             }
             dbData = data;
-            
-            // Check if stats object exists (for old users), if not init it
-            if(!dbData.stats) dbData.stats = { daily_min: 0, daily_sess: 0, boss_name: "Set Target", boss_hp: 0, boss_max: 10 };
+            if(!dbData.stats) dbData.stats = { daily_min: 0, milestone_name: "Set Goal", milestone_done: 0, milestone_target: 10 };
 
             document.getElementById('loginScreen').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
+            document.getElementById('usernameDisp').innerText = user.email.split('@')[0];
+            document.getElementById('notesArea').value = dbData.notes || '';
             
             renderSubjects();
-            updateGamificationUI();
-            document.getElementById('notesArea').value = dbData.notes || '';
+            updateUI();
         }
 
         async function sync() {
@@ -322,126 +356,115 @@
             }).eq('user_id', dbData.user_id);
         }
 
-        // --- 3. GAMIFICATION LOGIC ---
-        function updateGamificationUI() {
+        // --- UI UPDATES ---
+        function updateUI() {
             const s = dbData.stats;
             document.getElementById('streakCount').innerText = dbData.streak;
-            document.getElementById('dailyMins').innerText = s.daily_min;
+            document.getElementById('todayMins').innerText = s.daily_min;
 
-            // Update Boss UI
-            document.getElementById('bossName').innerText = s.boss_name;
-            document.getElementById('hpText').innerText = (s.boss_hp / 60).toFixed(1); // Show Hours
-            document.getElementById('hpMax').innerText = (s.boss_max / 60).toFixed(0); 
+            // Update Milestone Widget
+            document.getElementById('milestoneName').innerText = s.milestone_name;
+            document.getElementById('milestoneCurrent').innerText = (s.milestone_done / 60).toFixed(1);
+            document.getElementById('milestoneTarget').innerText = (s.milestone_target / 60).toFixed(0);
             
-            const hpPercent = (s.boss_hp / s.boss_max) * 100;
-            const bar = document.getElementById('bossHpBar');
-            bar.style.width = `${hpPercent}%`;
-            
-            // Color Change based on HP
-            if(hpPercent > 50) bar.style.background = "linear-gradient(90deg, #ef4444, #f87171)"; // Red
-            else if(hpPercent > 20) bar.style.background = "linear-gradient(90deg, #f59e0b, #fbbf24)"; // Orange
-            else bar.style.background = "linear-gradient(90deg, #10b981, #34d399)"; // Green (Kill range)
-
-            // Update Rings UI
-            // Targets: Time=240m (4h), Sess=4, Tasks=N/A (using hardcoded 5 for ring)
-            const r1 = 251 - (Math.min(s.daily_min, 240) / 240) * 251;
-            const r2 = 188 - (Math.min(s.daily_sess, 4) / 4) * 188;
-            
-            document.getElementById('ringTime').style.strokeDashoffset = r1;
-            document.getElementById('ringSess').style.strokeDashoffset = r2;
+            const percent = Math.min((s.milestone_done / s.milestone_target) * 100, 100);
+            document.getElementById('milestoneBar').style.width = percent + '%';
         }
 
-        function openBossModal() { document.getElementById('bossModal').style.display = 'flex'; }
-
-        function setNewBoss() {
-            const name = document.getElementById('bossNameIn').value;
-            const hours = document.getElementById('bossHpIn').value;
-            if(name && hours) {
-                dbData.stats.boss_name = name;
-                dbData.stats.boss_max = hours * 60; // Convert to mins
-                dbData.stats.boss_hp = hours * 60; // Full HP
-                sync();
-                updateGamificationUI();
-                document.getElementById('bossModal').style.display = 'none';
-            }
+        function renderSubjects() {
+            const grid = document.getElementById('subjectsGrid');
+            let html = '';
+            subjects.forEach(s => {
+                html += `
+                <div class="card" onclick="openViewer('${s.files.length>0 ? s.files[0].file : ''}')">
+                    <div class="card-icon"><i class="fas ${s.icon}"></i></div>
+                    <h3>${s.title}</h3>
+                    <p>${s.files.length} Resources</p>
+                </div>`;
+            });
+            grid.innerHTML = html;
         }
 
-        // --- 4. TIMER LOGIC (Updates Stats) ---
-        function startTimer(min, modeName) {
+        // --- TIMER (GLOBAL) ---
+        function startTimer(min, mode) {
             stopTimer();
-            document.getElementById('timerMode').innerText = modeName;
+            document.getElementById('timerMode').innerText = mode;
             let sec = min * 60;
-            let initialSec = sec;
-            updateTime(sec);
-            
+            let totalMin = min;
+            updateTimeDisplay(sec);
+
             timerInterval = setInterval(() => {
-                sec--; 
-                updateTime(sec);
-                
-                // Real-time Update every minute
+                sec--;
+                updateTimeDisplay(sec);
+
+                // Update Real-time Stats (every minute)
                 if(sec % 60 === 0) {
                     dbData.stats.daily_min++;
-                    if(dbData.stats.boss_hp > 0) dbData.stats.boss_hp--;
-                    updateGamificationUI();
-                    sync(); // Sync to cloud
+                    dbData.stats.milestone_done++;
+                    updateUI();
+                    sync();
                 }
 
                 if(sec <= 0) {
-                    stopTimer(); 
+                    stopTimer();
                     document.getElementById('alarmSound').play();
-                    
-                    dbData.stats.daily_sess++;
                     dbData.streak++;
-                    sync();
-                    updateGamificationUI();
-
-                    document.getElementById('breakMessage').innerText = `Session Complete. Boss took damage.`;
+                    updateUI(); sync();
+                    
+                    document.getElementById('breakMessage').innerText = `${totalMin} minutes of focus completed.`;
                     document.getElementById('breakModal').style.display = 'flex';
                 }
             }, 1000);
         }
 
-        function customTimer() {
-            let m = prompt("Enter Minutes:");
-            if(m) startTimer(m, "CUSTOM RAID");
-        }
-
-        function stopTimer() { clearInterval(timerInterval); updateTime(0); document.getElementById('timerMode').innerText = "READY"; }
-        function updateTime(sec) {
+        function stopTimer() { clearInterval(timerInterval); updateTimeDisplay(0); document.getElementById('timerMode').innerText = "IDLE"; }
+        function updateTimeDisplay(sec) {
             const m = Math.floor(sec/60).toString().padStart(2,'0');
             const s = (sec%60).toString().padStart(2,'0');
             document.getElementById('timerDisplay').innerText = `${m}:${s}`;
         }
-
-        // --- 5. NAVIGATION ---
-        function renderSubjects() {
-            const grid = document.getElementById('subjectsGrid');
-            let html = '';
-            subjects.forEach(s => {
-                html += `<div class="glass card" onclick="openViewer('${s.files.length>0?s.files[0].file:''}')"><div class="icon-box"><i class="fas ${s.icon}"></i></div><h3>${s.title}</h3></div>`;
-            });
-            grid.innerHTML = html;
+        function customTimer() {
+            let m = prompt("Enter duration (minutes):");
+            if(m && !isNaN(m)) startTimer(m, "CUSTOM FOCUS");
         }
 
-        function openViewer(url) {
-            if(!url) return alert("Empty Folder");
-            document.getElementById('viewerOverlay').style.display = 'block';
-            document.getElementById('contentFrame').src = url;
-            document.getElementById('sidebar').classList.remove('open');
-        }
-        function closeViewer() {
-            document.getElementById('viewerOverlay').style.display = 'none';
-            document.getElementById('contentFrame').src = '';
-        }
+        // --- NAVIGATION ---
         function toggleSidebar() {
             const sb = document.getElementById('sidebar');
             sb.classList.toggle('open');
             document.getElementById('handleIcon').className = sb.classList.contains('open') ? "fas fa-chevron-right" : "fas fa-chevron-left";
         }
-        function saveNotes() { dbData.notes = document.getElementById('notesArea').value; sync(); }
 
-        // --- INIT ---
+        function openViewer(url) {
+            if(!url) return alert("No file available.");
+            document.getElementById('viewerOverlay').style.display = 'block';
+            document.getElementById('contentFrame').src = url;
+            document.getElementById('sidebar').classList.remove('open'); // Auto-hide sidebar
+        }
+        function closeViewer() {
+            document.getElementById('viewerOverlay').style.display = 'none';
+            document.getElementById('contentFrame').src = '';
+        }
+
+        // --- MILESTONE CONFIG ---
+        function openMilestoneModal() { document.getElementById('milestoneModal').style.display = 'flex'; }
+        function setMilestone() {
+            const name = document.getElementById('msNameIn').value;
+            const hours = document.getElementById('msTargetIn').value;
+            if(name && hours) {
+                dbData.stats.milestone_name = name;
+                dbData.stats.milestone_target = hours * 60; // hours to mins
+                dbData.stats.milestone_done = 0; // reset progress
+                sync(); updateUI();
+                document.getElementById('milestoneModal').style.display = 'none';
+            }
+        }
+
+        function saveNotes() { dbData.notes = document.getElementById('notesArea').value; sync(); }
+        async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+        
         supabaseClient.auth.onAuthStateChange((event, session) => { if (session) initApp(session.user); });
+
     </script>
 </body>
 </html>
